@@ -19,7 +19,6 @@ export const Section = ({ title, text, image, buttonText, buttonLink }: SectionP
         gap: 4,
         p: 4,
         backgroundColor: 'background.paper',
-        borderRadius: 2,
         my: 4,
       }}
     >
@@ -28,7 +27,7 @@ export const Section = ({ title, text, image, buttonText, buttonLink }: SectionP
 
       {/* Texto + botón */}
       <Box sx={{ flex: 1 }}>
-        <Typography variant="h4" sx={{ mb: 2 }}>
+        <Typography variant="h2" sx={{ mb: 2 }}>
           {title}
         </Typography>
         <Typography variant="body1" sx={{ mb: 3 }}>

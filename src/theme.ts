@@ -3,27 +3,27 @@ import { createTheme } from '@mui/material/styles';
 export const theme = createTheme({
   palette: {
     primary: {
-      main: '#1e263e',   // tu primer color
+      main: '#0E2B40',   // tu primer color
     },
     secondary: {
-      main: '#9b3d12',   // segundo color
+      main: '#984916',   // segundo color
     },
     info: {
-      main: '#2d3856',   // tercer color
+      main: '#6B818C',   // tercer color
     },
     warning: {
       main: '#404c70',   // cuarto color
     },
     success: {
-      main: '#9976aa',   // quinto color
+      main: '#0E2B40',   // quinto color
     },
     background: {
       default: '#cccccc', // fondo principal
-      paper: '#1e263e',   // fondo de tarjetas y appbar
+      paper: '#6B818C',   // fondo de tarjetas y appbar
     },
     text: {
       primary: '#ffffff', // texto principal
-      secondary: '#cccccc', // texto secundario
+      secondary: '#6B818C', // texto secundario
     },
   },
   typography: {

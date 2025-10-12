@@ -1,13 +1,14 @@
-// src/components/Header.tsx
+import { useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, Box, IconButton } from '@mui/material';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
-import Logo from '../assets/logo_proyecto.png';
 import { LinkButton } from './LinkButton';
+import { HeaderLogo } from "./HeaderLogo";
 
 export const Header = () => {
+  const navigate = useNavigate();
   return (
-    <AppBar position="static" sx={{ backgroundColor: 'primary.main', height: 60 }}>
+    <AppBar position="static" sx={{ backgroundColor: 'primary.main', height: 85 }}>
       <Toolbar 
         sx={{ 
           display: 'flex', 
@@ -18,19 +19,24 @@ export const Header = () => {
       >
         {/* Izquierda: enlaces como botones */}
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'stretch' }}>
-          <LinkButton href="/clubes" sx={{ height: '100%' }}>Clubes</LinkButton>
-          <LinkButton href="/carreras" sx={{ height: '100%' }}>Carreras</LinkButton>
+          <LinkButton href="/clubs" sx={{ height: '100%' }}>Clubes</LinkButton>
+          <LinkButton href="/races" sx={{ height: '100%' }}>Carreras</LinkButton>
         </Box>
 
         {/* Centro: logo */}
-        <Box component="img" src={Logo} alt="Logo" sx={{ height: 50 }} />
+        <Box>
+          <HeaderLogo />
+        </Box>
 
         {/* Derecha: iconos */}
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <IconButton color="secondary">
+          <IconButton 
+            sx={{ color: 'text.primary' }}
+            onClick={() => navigate("/login")}
+            >
             <Person2OutlinedIcon />
           </IconButton>
-          <IconButton color="secondary">
+          <IconButton sx={{ color: 'text.primary' }}>
             <FavoriteBorderOutlinedIcon />
           </IconButton>
         </Box>

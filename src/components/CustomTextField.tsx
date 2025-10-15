@@ -11,7 +11,7 @@ export const CustomTextField = (props: TextFieldProps) => {
         "& .MuiOutlinedInput-root": {
           borderRadius: 2,
           "& fieldset": {
-            borderColor: "rgba(0,0,0,0.2)",
+            borderColor: "primary.main",
           },
           "&:hover fieldset": {
             borderColor: "primary.main",

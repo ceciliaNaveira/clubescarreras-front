@@ -1,4 +1,3 @@
-// src/components/CustomButton.tsx
 import Button from "@mui/material/Button";
 import type { ButtonProps } from "@mui/material/Button";
 

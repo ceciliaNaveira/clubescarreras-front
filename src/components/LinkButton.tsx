@@ -1,4 +1,3 @@
-// src/components/LinkButton.tsx
 import { Button } from '@mui/material';
 import type { SxProps, Theme } from '@mui/system';
 
@@ -7,7 +6,7 @@ interface LinkButtonProps {
   children: React.ReactNode;
   href?: string;
   onClick?: () => void;
-  sx?: SxProps<Theme>; // para estilos extra si quieres
+  sx?: SxProps<Theme>; 
 }
 
 export const LinkButton = ({ children, href, onClick, sx }: LinkButtonProps) => {

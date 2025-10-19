@@ -1,6 +1,7 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
+import { Footer } from "./components/Footer"
 import { HomePage } from "./pages/HomePage";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
@@ -22,6 +23,7 @@ function App() {
         <Route path="/races" element={<Races />} />
         <Route path="/races/:id" element={<RaceDetail />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }

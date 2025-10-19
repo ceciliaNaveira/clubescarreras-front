@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { LinkButton } from './LinkButton'; // importa tu componente
+import { LinkButton } from './LinkButton';
 
 interface SectionProps {
   title: string;

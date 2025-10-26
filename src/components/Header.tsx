@@ -1,12 +1,29 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppBar, Toolbar, Box, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Box, IconButton, Menu, MenuItem } from '@mui/material';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
+import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import { LinkButton } from './LinkButton';
 import { HeaderLogo } from "./HeaderLogo";
 
 export const Header = () => {
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuClick = (path) => {
+    navigate(path);
+    handleMenuClose();
+  };
+
   return (
     <AppBar position="static" sx={{ backgroundColor: 'primary.main', height: 85 }}>
       <Toolbar 
@@ -28,20 +45,37 @@ export const Header = () => {
           <HeaderLogo />
         </Box>
 
-        {/* Derecha: iconos */}
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        {/* Derecha: iconos (usuario, favorito, admin) */}
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <IconButton 
             sx={{ color: 'text.primary' }}
             onClick={() => navigate("/login")}
-            >
+          >
             <Person2OutlinedIcon />
           </IconButton>
           <IconButton sx={{ color: 'text.primary' }}>
             <FavoriteBorderOutlinedIcon />
           </IconButton>
+          <IconButton 
+            sx={{ color: 'text.primary' }} 
+            onClick={handleMenuOpen}
+          >
+            <AdminPanelSettingsOutlinedIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={() => handleMenuClick("/admin/clubs")}>
+              Gestionar Clubes
+            </MenuItem>
+            <MenuItem onClick={() => handleMenuClick("/admin/carreras")}>
+              Gestionar Carreras
+            </MenuItem>
+          </Menu>
         </Box>
       </Toolbar>
     </AppBar>
   );
 };
-

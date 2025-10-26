@@ -56,7 +56,10 @@ export const deleteComentario = async (id: number): Promise<void> => {
   const res = await fetch(`${BASE_URL}/comentarios/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Error al eliminar comentario");
 };
-
+// Obtener comentarios de un club por su ID
+export const getComentariosByClubId = async (clubId: number) => {
+  return buscarComentarios({ clubId });
+};
 // ==========================
 // BUSCAR COMENTARIOS POR FILTROS
 // ==========================

@@ -21,41 +21,41 @@ import { AdminNuevoUsuarioForm } from "./pages/Admin/AdminNuevoUsuarioForm";
 import { AdminComentarios } from "./pages/Admin/AdminComentario";
 import { AdminNuevoComentarioForm } from "./pages/Admin/AdminNuevoComentarioForm";
 
-
 function App() {
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/clubs" element={<Clubs />} />
-        <Route path="/clubs/:id" element={<ClubDetail />} />
-        <Route path="/races" element={<Races />} />
-        <Route path="/races/:id" element={<RaceDetail />} />
-        
-        {/* Admin clubes */}
-        <Route path="/admin/clubs" element={<AdminClubs />} />
-        <Route path="/admin/clubs/nuevo" element={<AdminNuevoClubForm />} /> 
-        <Route path="/admin/clubs/editar/:idClub" element={<AdminEditClubForm />} /> 
 
-        {/* Admin carreras */}
-        <Route path="/admin/carreras" element={<AdminCarreras />} />
-        <Route path="/admin/carreras/nueva" element={<AdminNuevaCarreraForm />} />
-        <Route path="/admin/carreras/editar/:idCarrera" element={<AdminEditCarreraForm />} />
+      <Router>
+        <Header />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/clubs" element={<Clubs />} />
+          <Route path="/clubs/:id" element={<ClubDetail />} />
+          <Route path="/races" element={<Races />} />
+          <Route path="/races/:id" element={<RaceDetail />} />
+          
+          {/* Admin clubes */}
+          <Route path="/admin/clubs" element={<AdminClubs />} />
+          <Route path="/admin/clubs/nuevo" element={<AdminNuevoClubForm />} /> 
+          <Route path="/admin/clubs/editar/:idClub" element={<AdminEditClubForm />} /> 
 
-        {/* Admin usuarios */}
-        <Route path="/admin/usuarios" element={<AdminUsuarios />} />
-        <Route path="/admin/usuarios/nuevo" element={<AdminNuevoUsuarioForm />} />
-        <Route path="/admin/usuarios/editar/:idUsuario" element={<AdminEditUsuarioForm />} />
+          {/* Admin carreras */}
+          <Route path="/admin/carreras" element={<AdminCarreras />} />
+          <Route path="/admin/carreras/nueva" element={<AdminNuevaCarreraForm />} />
+          <Route path="/admin/carreras/editar/:idCarrera" element={<AdminEditCarreraForm />} />
 
-        {/* Admin comentarios */}
-        <Route path="/admin/comentarios" element={<AdminComentarios />} />
-        <Route path="/admin/comentarios/nuevo" element={<AdminNuevoComentarioForm />} />
-      </Routes>
-      <Footer />
-    </Router>
+          {/* Admin usuarios */}
+          <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+          <Route path="/admin/usuarios/nuevo" element={<AdminNuevoUsuarioForm />} />
+          <Route path="/admin/usuarios/editar/:idUsuario" element={<AdminEditUsuarioForm />} />
+
+          {/* Admin comentarios */}
+          <Route path="/admin/comentarios" element={<AdminComentarios />} />
+          <Route path="/admin/comentarios/nuevo" element={<AdminNuevoComentarioForm />} />
+        </Routes>
+        <Footer />
+      </Router>
   );
 }
 

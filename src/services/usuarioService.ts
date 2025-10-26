@@ -67,6 +67,21 @@ export const saveUsuario = async (usuario: Partial<UsuarioRequest> & { usuarioId
   }
 };
 
+// Login de usuario
+export const loginUsuario = async (email: string, contraseña: string): Promise<any> => {
+  const res = await fetch(`${BASE_URL}/usuarios/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, contraseña }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Email o contraseña incorrectos");
+  }
+
+  return res.json(); // aquí recibes los datos del usuario logueado
+};
+
 // ==========================
 // BUSCAR USUARIOS POR FILTROS
 // ==========================

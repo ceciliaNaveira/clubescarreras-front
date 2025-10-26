@@ -11,16 +11,14 @@ export const Races = () => {
   const [carreras, setCarreras] = useState<(Carrera & { localizacion?: Localizacion })[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState<string>("");
-  const [ubicacionFiltro, setUbicacionFiltro] = useState<string>("");
   const [distanciaFiltro, setDistanciaFiltro] = useState<string>("");
+  const [ordenFecha, setOrdenFecha] = useState<"asc" | "desc">("asc");
 
-  // --- Cargar carreras + localizaciones ---
   const fetchCarreras = async () => {
     setLoading(true);
     try {
       const allCarreras = await getCarreras();
 
-      // Para cada carrera, obtenemos su localización
       const carrerasWithLoc = await Promise.all(
         allCarreras.map(async (c) => {
           try {
@@ -49,20 +47,18 @@ export const Races = () => {
   if (!carreras.length) return <p>No hay carreras disponibles</p>;
 
   // --- Filtros combinados ---
-  const filteredCarreras = carreras.filter((c) => {
-    const matchName =
-      c.nombre?.toLowerCase().includes(search.toLowerCase()) ?? false;
-
-    const matchUbicacion =
-      !ubicacionFiltro ||
-      c.provincia?.toLowerCase().includes(ubicacionFiltro.toLowerCase()) ||
-      c.municipio?.toLowerCase().includes(ubicacionFiltro.toLowerCase());
-
+  let filteredCarreras = carreras.filter((c) => {
+    const matchName = c.nombre?.toLowerCase().includes(search.toLowerCase()) ?? false;
     const matchDistancia =
-      !distanciaFiltro ||
-      (c.distanciaKm && c.distanciaKm <= Number(distanciaFiltro));
+      !distanciaFiltro || (c.distanciaKm && c.distanciaKm <= Number(distanciaFiltro));
+    return matchName && matchDistancia;
+  });
 
-    return matchName && matchUbicacion && matchDistancia;
+  // --- Ordenar por fecha ---
+  filteredCarreras = filteredCarreras.sort((a, b) => {
+    const fechaA = new Date(a.fecha).getTime();
+    const fechaB = new Date(b.fecha).getTime();
+    return ordenFecha === "asc" ? fechaA - fechaB : fechaB - fechaA;
   });
 
   return (
@@ -76,26 +72,14 @@ export const Races = () => {
       </Box>
 
       {/* --- Buscador + filtros --- */}
-      <Box sx={{ px: 4, display: "flex", gap: 2, alignItems: "center" }}>
+      <Box sx={{ px: 4, display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}>
         {/* Buscador por nombre */}
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, minWidth: 200 }}>
           <SearchBar search={search} setSearch={setSearch} />
         </Box>
 
-        {/* Filtro por ubicación */}
-        <Box sx={{ flex: 1 }}>
-          <TextField
-            label="Filtrar por ubicación"
-            variant="outlined"
-            size="small"
-            fullWidth
-            value={ubicacionFiltro}
-            onChange={(e) => setUbicacionFiltro(e.target.value)}
-          />
-        </Box>
-
         {/* Filtro por distancia */}
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, minWidth: 200 }}>
           <TextField
             label="Distancia máxima (km)"
             variant="outlined"
@@ -105,6 +89,23 @@ export const Races = () => {
             value={distanciaFiltro}
             onChange={(e) => setDistanciaFiltro(e.target.value)}
           />
+        </Box>
+
+        {/* Ordenar por fecha */}
+        <Box sx={{ flex: 1, minWidth: 200 }}>
+          <TextField
+            select
+            label="Ordenar por fecha"
+            value={ordenFecha}
+            onChange={(e) => setOrdenFecha(e.target.value as "asc" | "desc")}
+            SelectProps={{ native: true }}
+            fullWidth
+            size="small"
+            InputProps={{ sx: { height: 40, py: 0.8 } }} // Ajusta la altura para igualar
+          >
+            <option value="asc">Más próximas</option>
+            <option value="desc">Más lejanas</option>
+          </TextField>
         </Box>
       </Box>
 
@@ -117,7 +118,7 @@ export const Races = () => {
           label: c.nombre ?? "Sin nombre",
           lat: c.localizacion?.latitud ?? 0,
           lng: c.localizacion?.longitud ?? 0,
-          description: c.descripcion ?? "",
+          description: `${c.distanciaKm ?? "-"} km | ${new Date(c.fecha).toLocaleDateString("es-ES")}`,
         }))}
         getDetailLink={(carrera) => `/races/${carrera.id}`}
         search={search}

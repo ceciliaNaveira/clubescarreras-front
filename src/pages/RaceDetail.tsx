@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { type Carrera, getCarreraById } from "../services/carreraService";
 import { type Localizacion, getLocalizacionById } from "../services/localizacionService";
 
+import posterCarrera from "../assets/CartelCarrera.png"
+
 import {
   Box,
   Card,
@@ -65,15 +67,13 @@ export const RaceDetail = () => {
                 </a>
               </Typography>
             )}
-            {carrera.posterUrl && (
-              <Box sx={{ mt: 2 }}>
-                <img
-                  src={carrera.posterUrl}
-                  alt={`Cartel de ${carrera.nombre}`}
-                  style={{ width: "100%", borderRadius: "8px" }}
-                />
-              </Box>
-            )}
+            <Box sx={{ mt: 2 }}>
+              <img
+                src={posterCarrera}
+                alt={`Cartel de ${carrera.nombre}`}
+                style={{ width: "100%", borderRadius: "8px" }}
+              />
+            </Box>
           </CardContent>
         </Card>
 

@@ -7,10 +7,11 @@ import { type Entrenamiento, getEntrenamientosByClubId } from "../services/entre
 
 import { Box, Card, CardContent, Typography, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 import TitleDescription from "../components/TitleDescription";
+import { ClubComments } from "../components/ClubComments";
 
 export const ClubDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [club, setClub] = useState<Club | null>(null);
+  const [club, setClub] = useState<Club & { entrenamientos?: Entrenamiento[]; localizacion?: Localizacion } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,7 +21,6 @@ export const ClubDetail = () => {
       try {
         const c: Club = await getClubById(Number(id));
         const loc: Localizacion = await getLocalizacionById(c.localizacionId);
-        // CORREGIDO: usar clubId
         const entrenamientos: Entrenamiento[] = await getEntrenamientosByClubId(c.clubId);
 
         setClub({ ...c, localizacion: loc, entrenamientos });
@@ -47,7 +47,7 @@ export const ClubDetail = () => {
     <Box sx={{ px: 4, py: 3 }}>
       <TitleDescription title={club.nombre} description={club.descripcion} />
 
-      {/* Entrenamientos */}
+      {/* Entrenamientos arriba */}
       {club.entrenamientos && club.entrenamientos.length > 0 && (
         <Card sx={{ mt: 3 }}>
           <CardContent>
@@ -71,7 +71,6 @@ export const ClubDetail = () => {
                     return a.hora.localeCompare(b.hora);
                   })
                   .map(e => (
-                    // CORREGIDO: usar entrenamientoId
                     <TableRow key={e.entrenamientoId}>
                       <TableCell>{e.diaSemana}</TableCell>
                       <TableCell>{e.hora?.substring(0,5)}</TableCell>
@@ -86,25 +85,32 @@ export const ClubDetail = () => {
         </Card>
       )}
 
-      {/* Localización y datos del club */}
+      {/* Comentarios izquierda y datos/localización derecha */}
       <Box sx={{ display: "flex", gap: 3, mt: 3, flexWrap: "wrap" }}>
-        {club.localizacion && (
-          <Card sx={{ flex: 1, minWidth: 250 }}>
+        <Box sx={{ flex: 1, minWidth: 300 }}>
+          <ClubComments clubId={club.clubId} />
+        </Box>
+
+        <Box sx={{ flex: 1, minWidth: 250 }}>
+          {club.localizacion && (
+            <Card sx={{ mb: 2 }}>
+              <CardContent>
+                <Typography variant="h6">Localización</Typography>
+                <Typography>Dirección: {club.localizacion.direccion}</Typography>
+                <Typography>{club.localizacion.municipio}, {club.localizacion.provincia} ({club.localizacion.codigoPostal})</Typography>
+                <Typography>Lat/Lng: {club.localizacion.latitud}, {club.localizacion.longitud}</Typography>
+              </CardContent>
+            </Card>
+          )}
+
+          <Card>
             <CardContent>
-              <Typography variant="h6">Localización</Typography>
-              <Typography>Dirección: {club.localizacion.direccion}</Typography>
-              <Typography>{club.localizacion.municipio}, {club.localizacion.provincia} ({club.localizacion.codigoPostal})</Typography>
-              <Typography>Lat/Lng: {club.localizacion.latitud}, {club.localizacion.longitud}</Typography>
+              <Typography variant="h6">Datos del club</Typography>
+              <Typography>Contacto: {club.contacto}</Typography>
+              <Typography>Web: <a href={club.web} target="_blank">{club.web}</a></Typography>
             </CardContent>
           </Card>
-        )}
-        <Card sx={{ flex: 1, minWidth: 250 }}>
-          <CardContent>
-            <Typography variant="h6">Datos del club</Typography>
-            <Typography>Contacto: {club.contacto}</Typography>
-            <Typography>Web: <a href={club.web} target="_blank">{club.web}</a></Typography>
-          </CardContent>
-        </Card>
+        </Box>
       </Box>
     </Box>
   );

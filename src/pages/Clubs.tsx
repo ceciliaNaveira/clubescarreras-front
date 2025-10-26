@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
-import type { Club, Localizacion, Entrenamiento } from "../services/clubService";
-import { getClubs, getLocalizacionById, getEntrenamientosByClubId } from "../services/clubService";
+
+import { type Club, getClubs } from "../services/clubService";
+import { type Localizacion, getLocalizacionById } from "../services/localizacionService";
+import { type Entrenamiento, getEntrenamientosByClubId } from "../services/entrenamientoService";
+
 import SearchBar from "../components/SearchBar";
 import FiltroDiaSemana from "../components/FiltroDiaSemana";
 import TitleDescription from "../components/TitleDescription";
@@ -22,7 +25,8 @@ export const Clubs = () => {
 
       const clubsWithDetails = await Promise.all(
         allClubs.map(async c => {
-          const entrenamientos = await getEntrenamientosByClubId(c.idClub);
+          // Cargar solo entrenamientos de este club usando clubId
+          const entrenamientos: Entrenamiento[] = await getEntrenamientosByClubId(c.clubId);
           const loc: Localizacion = await getLocalizacionById(c.localizacionId);
           return { ...c, entrenamientos, localizacion: loc };
         })
@@ -64,7 +68,7 @@ export const Clubs = () => {
       </Box>
 
       {/* Buscador + filtro por día */}
-      <Box sx={{ px: 4, display: "flex", gap: 2, alignItems: "center"}}>
+      <Box sx={{ px: 4, display: "flex", gap: 2, alignItems: "center" }}>
         <Box sx={{ flex: 1 }}>
           <SearchBar search={search} setSearch={setSearch} />
         </Box>
@@ -72,7 +76,7 @@ export const Clubs = () => {
           <FiltroDiaSemana
             diaSemanaFiltro={diaSemanaFiltro}
             setDiaSemanaFiltro={setDiaSemanaFiltro}
-            handleFiltro={() => {}} // ya no es necesario
+            handleFiltro={() => {}}
             diasSemana={DIAS_SEMANA}
           />
         </Box>
@@ -83,14 +87,14 @@ export const Clubs = () => {
         title=""
         description=""
         items={filteredClubs.map(c => ({
-          id: c.idClub.toString(),
+          id: c.clubId.toString(),           // <- CORREGIDO
           label: c.nombre ?? "Sin nombre",
           lat: c.localizacion?.latitud ?? 0,
           lng: c.localizacion?.longitud ?? 0,
           description: c.descripcion ?? "",
         }))}
-        getDetailLink={club => `/clubs/${club.id}`}
-        search={search} 
+        getDetailLink={club => `/clubs/${club.id}`} // club.id aquí es el clubId string
+        search={search}
       />
     </div>
   );

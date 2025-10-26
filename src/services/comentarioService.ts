@@ -1,5 +1,3 @@
-// src/services/comentarioService.ts
-
 export type Comentario = {
   idComentario: number;
   usuario: string;

@@ -12,6 +12,8 @@ import { type Localizacion, getLocalizacionById, saveLocalizacion } from "../../
 
 import { Box, TextField, MenuItem, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { TextInput } from "../../components/TextInput";
+import { SelectInput } from "../../components/SelectInput";
 
 const DIAS_SEMANA = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
 const NIVELES = ["Iniciación", "Intermedio", "Avanzado"];
@@ -145,20 +147,18 @@ export const AdminEditClubForm = () => {
           Volver
         </Button>
       </Box>
+
       {/* --- Club --- */}
       <Box sx={{ mb: 3, p: 2, backgroundColor: "#fff", borderRadius: 2, boxShadow: "0 2px 6px rgba(0,0,0,0.1)" }}>
         <h3 style={{ color: theme.palette.primary.main }}>Club</h3>
         {["nombre", "descripcion", "contacto", "web"].map((field, idx) => (
-          <TextField
+          <TextInput
             key={idx}
-            {...textFieldProps}
             label={field.charAt(0).toUpperCase() + field.slice(1)}
             value={(club as any)[field] || ""}
-            onChange={e => handleClubChange(field as keyof Club, e.target.value)}
-            fullWidth
+            onChange={val => handleClubChange(field as keyof Club, val)}
             multiline={field === "descripcion"}
             rows={field === "descripcion" ? 3 : 1}
-            sx={{ mb: 2, ...inputStyle }}
           />
         ))}
       </Box>
@@ -166,18 +166,21 @@ export const AdminEditClubForm = () => {
       {/* --- Localización --- */}
       <Box sx={{ mb: 3, p: 2, backgroundColor: "#fff", borderRadius: 2, boxShadow: "0 2px 6px rgba(0,0,0,0.1)" }}>
         <h3 style={{ color: theme.palette.primary.main }}>Localización</h3>
-        {["provincia", "municipio", "codigoPostal", "direccion", "latitud", "longitud"].map((field, idx) => (
-          <TextField
+        {["provincia", "municipio", "codigoPostal", "direccion"].map((field, idx) => (
+          <TextInput
             key={idx}
-            {...textFieldProps}
             label={field.charAt(0).toUpperCase() + field.slice(1)}
             value={(localizacion as any)[field] || ""}
-            type={field === "latitud" || field === "longitud" ? "number" : "text"}
-            onChange={e =>
-              handleLocChange(field as keyof Localizacion, field === "latitud" || field === "longitud" ? parseFloat(e.target.value) : e.target.value)
-            }
-            fullWidth
-            sx={{ mb: 2, ...inputStyle }}
+            onChange={val => handleLocChange(field as keyof Localizacion, val)}
+          />
+        ))}
+        {["latitud", "longitud"].map((field, idx) => (
+          <TextInput
+            key={idx}
+            label={field.charAt(0).toUpperCase() + field.slice(1)}
+            type="number"
+            value={(localizacion as any)[field] || ""}
+            onChange={val => handleLocChange(field as keyof Localizacion, parseFloat(val))}
           />
         ))}
       </Box>
@@ -191,53 +194,38 @@ export const AdminEditClubForm = () => {
 
         {entrenamientos.map((e, idx) => (
           <Box key={e.entrenamientoId || idx} sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr auto", gap: 1, mb: 2 }}>
-            <TextField
-              select
+            
+            <SelectInput
               label="Día"
               value={e.diaSemana}
-              onChange={ev => handleEntrenamientoChange(idx, "diaSemana", ev.target.value)}
-              {...textFieldProps}
-              sx={inputStyle}
-            >
-              {DIAS_SEMANA.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}
-            </TextField>
+              onChange={val => handleEntrenamientoChange(idx, "diaSemana", val)}
+              options={DIAS_SEMANA.map(d => ({ value: d, label: d }))}
+            />
 
-            <TextField
+            <TextInput
               label="Hora"
               type="time"
               value={e.hora || "10:00"}
-              onChange={ev => handleEntrenamientoChange(idx, "hora", ev.target.value)}
-              {...textFieldProps}
-              sx={inputStyle}
+              onChange={val => handleEntrenamientoChange(idx, "hora", val)}
             />
 
-            <TextField
-              select
+            <SelectInput
               label="Nivel"
               value={e.nivel}
-              onChange={ev => handleEntrenamientoChange(idx, "nivel", ev.target.value)}
-              {...textFieldProps}
-              sx={inputStyle}
-            >
-              {NIVELES.map(n => <MenuItem key={n} value={n}>{n}</MenuItem>)}
-            </TextField>
-
-            {/* Campo lugar separado */}
-            <TextField
-              label="Lugar"
-              value={e.lugarEntrenamiento}
-              onChange={ev => handleEntrenamientoChange(idx, "lugarEntrenamiento", ev.target.value)}
-              {...textFieldProps}
-              sx={inputStyle}
+              onChange={val => handleEntrenamientoChange(idx, "nivel", val)}
+              options={NIVELES.map(n => ({ value: n, label: n }))}
             />
 
-            {/* Campo descripción separado */}
-            <TextField
+            <TextInput
+              label="Lugar"
+              value={e.lugarEntrenamiento}
+              onChange={val => handleEntrenamientoChange(idx, "lugarEntrenamiento", val)}
+            />
+
+            <TextInput
               label="Descripción"
               value={e.descripcion || ""}
-              onChange={ev => handleEntrenamientoChange(idx, "descripcion", ev.target.value)}
-              {...textFieldProps}
-              sx={inputStyle}
+              onChange={val => handleEntrenamientoChange(idx, "descripcion", val)}
             />
 
             <Button color="error" variant="contained" onClick={() => removeEntrenamiento(idx)}>Eliminar</Button>
@@ -245,7 +233,6 @@ export const AdminEditClubForm = () => {
         ))}
       </Box>
 
-      {/* --- Guardar todo --- */}
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
         <Button variant="contained" color="primary" onClick={handleSaveAll}>Guardar</Button>
       </Box>

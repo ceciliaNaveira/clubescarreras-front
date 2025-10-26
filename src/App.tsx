@@ -13,7 +13,9 @@ import { AdminClubs } from "./pages/Admin/AdminClubs";
 import { AdminEditClubForm } from "./pages/Admin/AdminEditClubForm";
 import { AdminNuevoClubForm } from "./pages/Admin/AdminNuevoClubForm";
 import { AdminCarreras } from "./pages/Admin/AdminCarreras";
-import { AdminCarrerasForm } from "./pages/Admin/AdminCarrerasForm";
+import { AdminNuevaCarreraForm } from "./pages/Admin/AdminNuevaCarreraForm";
+import { AdminEditCarreraForm } from "./pages/Admin/AdminEditCarreraForm";
+
 
 function App() {
   return (
@@ -35,8 +37,8 @@ function App() {
 
         {/* Admin carreras */}
         <Route path="/admin/carreras" element={<AdminCarreras />} />
-        <Route path="/admin/carreras/nueva" element={<AdminCarrerasForm />} />
-        <Route path="/admin/carreras/editar/:idCarrera" element={<AdminCarrerasForm />} />
+        <Route path="/admin/carreras/nueva" element={<AdminNuevaCarreraForm />} />
+        <Route path="/admin/carreras/editar/:idCarrera" element={<AdminEditCarreraForm />} />
       </Routes>
       <Footer />
     </Router>

@@ -73,6 +73,12 @@ export const Header = () => {
             <MenuItem onClick={() => handleMenuClick("/admin/carreras")}>
               Gestionar Carreras
             </MenuItem>
+            <MenuItem onClick={() => handleMenuClick("/admin/usuarios")}>
+              Gestionar Usuarios
+            </MenuItem>
+            <MenuItem onClick={() => handleMenuClick("/admin/comentarios")}>
+              Gestionar Comentarios
+            </MenuItem>
           </Menu>
         </Box>
       </Toolbar>

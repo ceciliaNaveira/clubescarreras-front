@@ -1,48 +1,69 @@
-export type Comentario = {
-  idComentario: number;
-  usuario: string;
+// comentarioService.ts
+
+export type ComentarioRequest = {
+  usuarioId: number;
+  clubId: number;
   texto: string;
-  fecha: string;
-  idClub: number;
+  valoracion: number; // 1 a 5
 };
 
-// Usar variable de entorno para backend
-const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
+const BASE_URL = "http://localhost:8080";
 
-export const getComentariosByClubId = async (idClub: number): Promise<Comentario[]> => {
-  const params = new URLSearchParams({ idClub: idClub.toString() });
-  const response = await fetch(`${BASE_URL}/comentarios/buscar?${params.toString()}`);
-  
-  if (!response.ok) {
-    throw new Error(`Error al obtener comentarios: ${response.statusText}`);
-  }
+// ==========================
+// ENDPOINTS
+// ==========================
 
-  return response.json(); // aquí sí recibimos JSON
+// Listar todos los comentarios
+export const getComentarios = async (): Promise<any[]> => {
+  const res = await fetch(`${BASE_URL}/comentarios`);
+  if (!res.ok) throw new Error("Error al cargar comentarios");
+  return res.json();
 };
 
-// Otros endpoints opcionales
-export const createComentario = async (comentario: Partial<Comentario>) => {
-  const response = await fetch(`${BASE_URL}/comentarios`, {
+// Obtener comentario por ID
+export const getComentarioById = async (id: number): Promise<any> => {
+  const res = await fetch(`${BASE_URL}/comentarios/${id}`);
+  if (!res.ok) throw new Error("Error al cargar comentario");
+  return res.json();
+};
+
+// Crear comentario
+export const createComentario = async (comentario: ComentarioRequest): Promise<any> => {
+  const res = await fetch(`${BASE_URL}/comentarios`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(comentario),
   });
-  if (!response.ok) throw new Error("Error al crear comentario");
-  return response.json();
+
+  if (!res.ok) throw new Error("Error al crear comentario");
+  return res.json();
 };
 
-export const updateComentario = async (id: number, comentario: Partial<Comentario>) => {
-  const response = await fetch(`${BASE_URL}/comentarios/${id}`, {
+// Actualizar comentario por ID
+export const updateComentario = async (id: number, comentario: ComentarioRequest): Promise<any> => {
+  const res = await fetch(`${BASE_URL}/comentarios/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(comentario),
   });
-  if (!response.ok) throw new Error("Error al actualizar comentario");
-  return response.json();
+
+  if (!res.ok) throw new Error("Error al actualizar comentario");
+  return res.json();
 };
 
-export const deleteComentario = async (id: number) => {
-  const response = await fetch(`${BASE_URL}/comentarios/${id}`, { method: "DELETE" });
-  if (!response.ok) throw new Error("Error al eliminar comentario");
-  return response.json();
+// Eliminar comentario por ID
+export const deleteComentario = async (id: number): Promise<void> => {
+  const res = await fetch(`${BASE_URL}/comentarios/${id}`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Error al eliminar comentario");
+};
+
+// ==========================
+// BUSCAR COMENTARIOS POR FILTROS
+// ==========================
+// filtros opcionales: usuarioId, clubId
+export const buscarComentarios = async (filtros: { usuarioId?: number; clubId?: number }): Promise<any[]> => {
+  const query = new URLSearchParams(filtros as any).toString();
+  const res = await fetch(`${BASE_URL}/comentarios/buscar?${query}`);
+  if (!res.ok) throw new Error("Error al buscar comentarios");
+  return res.json();
 };

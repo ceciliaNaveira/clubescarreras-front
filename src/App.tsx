@@ -15,6 +15,11 @@ import { AdminNuevoClubForm } from "./pages/Admin/AdminNuevoClubForm";
 import { AdminCarreras } from "./pages/Admin/AdminCarreras";
 import { AdminNuevaCarreraForm } from "./pages/Admin/AdminNuevaCarreraForm";
 import { AdminEditCarreraForm } from "./pages/Admin/AdminEditCarreraForm";
+import { AdminUsuarios } from "./pages/Admin/AdminUsuario";
+import { AdminEditUsuarioForm } from "./pages/Admin/AdminEditUsuarioForm";
+import { AdminNuevoUsuarioForm } from "./pages/Admin/AdminNuevoUsuarioForm";
+import { AdminComentarios } from "./pages/Admin/AdminComentario";
+import { AdminNuevoComentarioForm } from "./pages/Admin/AdminNuevoComentarioForm";
 
 
 function App() {
@@ -32,13 +37,22 @@ function App() {
         
         {/* Admin clubes */}
         <Route path="/admin/clubs" element={<AdminClubs />} />
-        <Route path="/admin/clubs/nuevo" element={<AdminNuevoClubForm />} /> {/* Formulario de creación */}
-        <Route path="/admin/clubs/editar/:idClub" element={<AdminEditClubForm />} /> {/* Formulario de edición */}
+        <Route path="/admin/clubs/nuevo" element={<AdminNuevoClubForm />} /> 
+        <Route path="/admin/clubs/editar/:idClub" element={<AdminEditClubForm />} /> 
 
         {/* Admin carreras */}
         <Route path="/admin/carreras" element={<AdminCarreras />} />
         <Route path="/admin/carreras/nueva" element={<AdminNuevaCarreraForm />} />
         <Route path="/admin/carreras/editar/:idCarrera" element={<AdminEditCarreraForm />} />
+
+        {/* Admin usuarios */}
+        <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+        <Route path="/admin/usuarios/nuevo" element={<AdminNuevoUsuarioForm />} />
+        <Route path="/admin/usuarios/editar/:idUsuario" element={<AdminEditUsuarioForm />} />
+
+        {/* Admin comentarios */}
+        <Route path="/admin/comentarios" element={<AdminComentarios />} />
+        <Route path="/admin/comentarios/nuevo" element={<AdminNuevoComentarioForm />} />
       </Routes>
       <Footer />
     </Router>

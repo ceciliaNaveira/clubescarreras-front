@@ -1,35 +1,127 @@
-// src/pages/Races.tsx
+import { useEffect, useState } from "react";
+import { Box, TextField } from "@mui/material";
+
+import { type Carrera, getCarreras } from "../services/carreraService";
+import { type Localizacion, getLocalizacionById } from "../services/localizacionService";
+import SearchBar from "../components/SearchBar";
+import TitleDescription from "../components/TitleDescription";
 import { ListPage } from "../components/ListPage";
 
-interface Race {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  description: string;
-}
-
-const races: Race[] = [
-  { id: "1", name: "Maratón de A Coruña", lat: 43.3623, lng: -8.4115, description: "Maratón anual con recorrido por el centro de la ciudad." },
-  { id: "2", name: "Vigo Night Run", lat: 42.2408, lng: -8.7223, description: "Carrera nocturna de 5 km por Vigo, para todos los niveles." },
-  { id: "3", name: "Lugo Trail", lat: 43.0047, lng: -7.5560, description: "Carrera de montaña en Lugo, con vistas espectaculares." },
-  { id: "4", name: "Ourense 10K", lat: 42.3438, lng: -7.8632, description: "Carrera urbana de 10 km en Ourense." },
-  { id: "5", name: "Pontevedra Run Fest", lat: 42.4333, lng: -8.6444, description: "Festival de carreras con distancias de 5K, 10K y media maratón." },
-];
-
 export const Races = () => {
+  const [carreras, setCarreras] = useState<(Carrera & { localizacion?: Localizacion })[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState<string>("");
+  const [ubicacionFiltro, setUbicacionFiltro] = useState<string>("");
+  const [distanciaFiltro, setDistanciaFiltro] = useState<string>("");
+
+  // --- Cargar carreras + localizaciones ---
+  const fetchCarreras = async () => {
+    setLoading(true);
+    try {
+      const allCarreras = await getCarreras();
+
+      // Para cada carrera, obtenemos su localización
+      const carrerasWithLoc = await Promise.all(
+        allCarreras.map(async (c) => {
+          try {
+            const loc = await getLocalizacionById(c.localizacionId);
+            return { ...c, localizacion: loc };
+          } catch {
+            return { ...c, localizacion: undefined };
+          }
+        })
+      );
+
+      setCarreras(carrerasWithLoc);
+    } catch (err) {
+      console.error("Error al cargar carreras", err);
+      setCarreras([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCarreras();
+  }, []);
+
+  if (loading) return <p>Cargando carreras...</p>;
+  if (!carreras.length) return <p>No hay carreras disponibles</p>;
+
+  // --- Filtros combinados ---
+  const filteredCarreras = carreras.filter((c) => {
+    const matchName =
+      c.nombre?.toLowerCase().includes(search.toLowerCase()) ?? false;
+
+    const matchUbicacion =
+      !ubicacionFiltro ||
+      c.provincia?.toLowerCase().includes(ubicacionFiltro.toLowerCase()) ||
+      c.municipio?.toLowerCase().includes(ubicacionFiltro.toLowerCase());
+
+    const matchDistancia =
+      !distanciaFiltro ||
+      (c.distanciaKm && c.distanciaKm <= Number(distanciaFiltro));
+
+    return matchName && matchUbicacion && matchDistancia;
+  });
+
   return (
-    <ListPage
-      title="Carreras en Galicia"
-      description="Descubre las carreras populares más interesantes y participa en la que más te motive."
-      items={races.map(r => ({
-        id: r.id,
-        label: r.name,
-        lat: r.lat,
-        lng: r.lng,
-        description: r.description
-      }))}
-      getDetailLink={(race) => `/races/${race.id}`}
-    />
+    <div>
+      {/* --- Título y descripción --- */}
+      <Box sx={{ px: 2, mt: 2, mb: 2 }}>
+        <TitleDescription
+          title="Carreras en Galicia"
+          description="Descubre las carreras populares más interesantes y participa en la que más te motive."
+        />
+      </Box>
+
+      {/* --- Buscador + filtros --- */}
+      <Box sx={{ px: 4, display: "flex", gap: 2, alignItems: "center" }}>
+        {/* Buscador por nombre */}
+        <Box sx={{ flex: 1 }}>
+          <SearchBar search={search} setSearch={setSearch} />
+        </Box>
+
+        {/* Filtro por ubicación */}
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            label="Filtrar por ubicación"
+            variant="outlined"
+            size="small"
+            fullWidth
+            value={ubicacionFiltro}
+            onChange={(e) => setUbicacionFiltro(e.target.value)}
+          />
+        </Box>
+
+        {/* Filtro por distancia */}
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            label="Distancia máxima (km)"
+            variant="outlined"
+            size="small"
+            fullWidth
+            type="number"
+            value={distanciaFiltro}
+            onChange={(e) => setDistanciaFiltro(e.target.value)}
+          />
+        </Box>
+      </Box>
+
+      {/* --- Lista y mapa --- */}
+      <ListPage
+        title=""
+        description=""
+        items={filteredCarreras.map((c) => ({
+          id: c.carreraId.toString(),
+          label: c.nombre ?? "Sin nombre",
+          lat: c.localizacion?.latitud ?? 0,
+          lng: c.localizacion?.longitud ?? 0,
+          description: c.descripcion ?? "",
+        }))}
+        getDetailLink={(carrera) => `/races/${carrera.id}`}
+        search={search}
+      />
+    </div>
   );
 };

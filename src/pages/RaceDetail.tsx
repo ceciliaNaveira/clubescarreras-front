@@ -1,26 +1,112 @@
-// src/pages/RaceDetail.tsx
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Typography } from "@mui/material";
 
-const racesData = [
-  { id: "1", name: "Maratón de A Coruña", description: "Maratón anual con recorrido por el centro de la ciudad." },
-  { id: "2", name: "Vigo Night Run", description: "Carrera nocturna de 5 km por Vigo, para todos los niveles." },
-  { id: "3", name: "Lugo Trail", description: "Carrera de montaña en Lugo, con vistas espectaculares." },
-  { id: "4", name: "Ourense 10K", description: "Carrera urbana de 10 km en Ourense." },
-  { id: "5", name: "Pontevedra Run Fest", description: "Festival de carreras con distancias de 5K, 10K y media maratón." },
-];
+import { type Carrera, getCarreraById } from "../services/carreraService";
+import { type Localizacion, getLocalizacionById } from "../services/localizacionService";
+
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography
+} from "@mui/material";
+import TitleDescription from "../components/TitleDescription";
 
 export const RaceDetail = () => {
-  const { id } = useParams();
-  const race = racesData.find(r => r.id === id);
+  const { id } = useParams<{ id: string }>();
+  const [carrera, setCarrera] = useState<Carrera | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!race) return <Typography>Carrera no encontrada</Typography>;
+  useEffect(() => {
+    const fetchCarrera = async () => {
+      if (!id) return;
+      setLoading(true);
+      try {
+        // 1️⃣ Obtener datos de la carrera
+        const c: Carrera = await getCarreraById(Number(id));
+
+        // 2️⃣ Obtener la localización asociada
+        const loc: Localizacion = await getLocalizacionById(c.localizacionId);
+
+        // 3️⃣ Guardar todo junto en el estado
+        setCarrera({ ...c, localizacion: loc });
+      } catch (err) {
+        console.error("Error al cargar detalles de la carrera:", err);
+        setCarrera(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCarrera();
+  }, [id]);
+
+  if (loading) return <p>Cargando detalles de la carrera...</p>;
+  if (!carrera) return <p>Carrera no encontrada</p>;
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4">{race.name}</Typography>
-      <Typography sx={{ mt: 2 }}>{race.description}</Typography>
+    <Box sx={{ px: 4, py: 3 }}>
+      {/* 🏁 Título y descripción */}
+      <TitleDescription title={carrera.nombre} description={carrera.descripcion} />
+
+      {/* 🗓️ Información principal */}
+      <Box sx={{ display: "flex", gap: 3, mt: 3, flexWrap: "wrap" }}>
+        <Card sx={{ flex: 1, minWidth: 250 }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>Detalles de la carrera</Typography>
+            <Typography>Fecha: {carrera.fecha}</Typography>
+            {carrera.distanciaKm && <Typography>Distancia: {carrera.distanciaKm} km</Typography>}
+            {carrera.clubNombre && <Typography>Organiza: {carrera.clubNombre}</Typography>}
+            {carrera.webOficial && (
+              <Typography>
+                Web:{" "}
+                <a href={carrera.webOficial} target="_blank" rel="noreferrer">
+                  {carrera.webOficial}
+                </a>
+              </Typography>
+            )}
+            {carrera.posterUrl && (
+              <Box sx={{ mt: 2 }}>
+                <img
+                  src={carrera.posterUrl}
+                  alt={`Cartel de ${carrera.nombre}`}
+                  style={{ width: "100%", borderRadius: "8px" }}
+                />
+              </Box>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* 📍 Localización */}
+        {carrera.localizacion && (
+          <Card sx={{ flex: 1, minWidth: 250 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>Localización</Typography>
+              <Typography>Dirección: {carrera.localizacion.direccion}</Typography>
+              <Typography>
+                {carrera.localizacion.municipio}, {carrera.localizacion.provincia} ({carrera.localizacion.codigoPostal})
+              </Typography>
+              <Typography>
+                Lat/Lng: {carrera.localizacion.latitud}, {carrera.localizacion.longitud}
+              </Typography>
+
+              {/* 🗺️ Mapa embebido */}
+              <Box sx={{ mt: 2 }}>
+                <iframe
+                  title="Mapa de localización"
+                  width="100%"
+                  height="250"
+                  style={{ border: 0, borderRadius: 8 }}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://www.google.com/maps?q=${carrera.localizacion.latitud},${carrera.localizacion.longitud}&hl=es&z=14&output=embed`}
+                ></iframe>
+              </Box>
+            </CardContent>
+          </Card>
+        )}
+      </Box>
     </Box>
   );
 };
-

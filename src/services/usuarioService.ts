@@ -1,5 +1,3 @@
-// usuarioService.ts
-
 export type UsuarioRequest = {
   nombre: string;
   email: string;
@@ -8,10 +6,6 @@ export type UsuarioRequest = {
 };
 
 const BASE_URL = "http://localhost:8080";
-
-// ==========================
-// ENDPOINTS
-// ==========================
 
 // Listar todos los usuarios
 export const getUsuarios = async (): Promise<any[]> => {
@@ -82,9 +76,6 @@ export const loginUsuario = async (email: string, contraseña: string): Promise<
   return res.json(); // aquí recibes los datos del usuario logueado
 };
 
-// ==========================
-// BUSCAR USUARIOS POR FILTROS
-// ==========================
 // filtros opcionales: nombre, email, rolId
 export const buscarUsuarios = async (filtros: Partial<UsuarioRequest> & { rolId?: number }): Promise<any[]> => {
   const query = new URLSearchParams(filtros as any).toString();

@@ -1,5 +1,5 @@
 export type Entrenamiento = {
-  entrenamientoId: number;   // <- cambiado
+  entrenamientoId: number;
   clubId: number;
   diaSemana: string;
   lugarEntrenamiento: string;

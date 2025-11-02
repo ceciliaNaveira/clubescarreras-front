@@ -7,7 +7,7 @@ export type Club = {
   descripcion?: string;
   contacto?: string;
   web?: string;
-  idLocalizacion: number;          // <- cambiado
+  idLocalizacion: number;
   localizacion?: Localizacion;
   entrenamientos?: Entrenamiento[];
 };

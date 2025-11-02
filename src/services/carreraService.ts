@@ -4,7 +4,7 @@ export type Carrera = {
   localizacionId: number;
   nombre: string;
   descripcion?: string;
-  fecha: string; // YYYY-MM-DD
+  fecha: string; 
   distanciaKm?: number;
   webOficial?: string;
   posterUrl?: string;

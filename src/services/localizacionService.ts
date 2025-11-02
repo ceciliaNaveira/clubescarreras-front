@@ -1,5 +1,5 @@
 export type Localizacion = {
-  localizacionId: number;  // <- cambiado
+  localizacionId: number; 
   provincia: string;
   municipio: string;
   codigoPostal?: string;

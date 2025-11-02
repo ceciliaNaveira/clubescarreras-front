@@ -5,10 +5,12 @@ import { Footer } from "./components/Footer"
 import { HomePage } from "./pages/HomePage";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { Perfil } from "./pages/Perfil";
 import { Clubs } from "./pages/Clubs";
 import { ClubDetail } from "./pages/ClubDetail";
 import { Races } from "./pages/Races";
 import { RaceDetail } from "./pages/RaceDetail";
+import { Favoritos } from "./pages/Favoritos";
 import { AdminClubs } from "./pages/Admin/AdminClubs";
 import { AdminEditClubForm } from "./pages/Admin/AdminEditClubForm";
 import { AdminNuevoClubForm } from "./pages/Admin/AdminNuevoClubForm";
@@ -30,10 +32,12 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/perfil" element={<Perfil />} />
           <Route path="/clubs" element={<Clubs />} />
           <Route path="/clubs/:id" element={<ClubDetail />} />
           <Route path="/races" element={<Races />} />
           <Route path="/races/:id" element={<RaceDetail />} />
+          <Route path="/favoritos" element={<Favoritos />} />
           
           {/* Admin clubes */}
           <Route path="/admin/clubs" element={<AdminClubs />} />

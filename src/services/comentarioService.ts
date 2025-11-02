@@ -1,5 +1,3 @@
-// comentarioService.ts
-
 export type ComentarioRequest = {
   usuarioId: number;
   clubId: number;
@@ -8,10 +6,6 @@ export type ComentarioRequest = {
 };
 
 const BASE_URL = "http://localhost:8080";
-
-// ==========================
-// ENDPOINTS
-// ==========================
 
 // Listar todos los comentarios
 export const getComentarios = async (): Promise<any[]> => {
@@ -60,9 +54,7 @@ export const deleteComentario = async (id: number): Promise<void> => {
 export const getComentariosByClubId = async (clubId: number) => {
   return buscarComentarios({ clubId });
 };
-// ==========================
-// BUSCAR COMENTARIOS POR FILTROS
-// ==========================
+
 // filtros opcionales: usuarioId, clubId
 export const buscarComentarios = async (filtros: { usuarioId?: number; clubId?: number }): Promise<any[]> => {
   const query = new URLSearchParams(filtros as any).toString();

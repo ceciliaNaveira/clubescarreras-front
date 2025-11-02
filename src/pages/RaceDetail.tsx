@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
 import { type Carrera, getCarreraById } from "../services/carreraService";
 import { type Localizacion, getLocalizacionById } from "../services/localizacionService";
-
 import posterCarrera from "../assets/CartelCarrera.png"
+import { FavoriteButton } from "../components/FavoriteButton";
 
 import {
   Box,
@@ -24,13 +23,13 @@ export const RaceDetail = () => {
       if (!id) return;
       setLoading(true);
       try {
-        // 1️⃣ Obtener datos de la carrera
+        // Obtener datos de la carrera
         const c: Carrera = await getCarreraById(Number(id));
 
-        // 2️⃣ Obtener la localización asociada
+        // Obtener la localización asociada
         const loc: Localizacion = await getLocalizacionById(c.localizacionId);
 
-        // 3️⃣ Guardar todo junto en el estado
+        // Guardar todo junto en el estado
         setCarrera({ ...c, localizacion: loc });
       } catch (err) {
         console.error("Error al cargar detalles de la carrera:", err);
@@ -48,10 +47,12 @@ export const RaceDetail = () => {
 
   return (
     <Box sx={{ px: 4, py: 3 }}>
-      {/* 🏁 Título y descripción */}
-      <TitleDescription title={carrera.nombre} description={carrera.descripcion} />
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <TitleDescription title={carrera.nombre} description={carrera.descripcion} />
+        <FavoriteButton tipo="carrera" id={carrera.carreraId} />
+      </Box>
 
-      {/* 🗓️ Información principal */}
+      {/* Información principal */}
       <Box sx={{ display: "flex", gap: 3, mt: 3, flexWrap: "wrap" }}>
         <Card sx={{ flex: 1, minWidth: 250 }}>
           <CardContent>
@@ -77,7 +78,7 @@ export const RaceDetail = () => {
           </CardContent>
         </Card>
 
-        {/* 📍 Localización */}
+        {/* Localización */}
         {carrera.localizacion && (
           <Card sx={{ flex: 1, minWidth: 250 }}>
             <CardContent>
@@ -90,7 +91,7 @@ export const RaceDetail = () => {
                 Lat/Lng: {carrera.localizacion.latitud}, {carrera.localizacion.longitud}
               </Typography>
 
-              {/* 🗺️ Mapa embebido */}
+              {/* Mapa embebido */}
               <Box sx={{ mt: 2 }}>
                 <iframe
                   title="Mapa de localización"

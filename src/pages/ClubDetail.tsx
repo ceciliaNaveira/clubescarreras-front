@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
 import { type Club, getClubById } from "../services/clubService";
 import { type Localizacion, getLocalizacionById } from "../services/localizacionService";
 import { type Entrenamiento, getEntrenamientosByClubId } from "../services/entrenamientoService";
-
 import { Box, Card, CardContent, Typography, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 import TitleDescription from "../components/TitleDescription";
 import { ClubComments } from "../components/ClubComments";
+import { FavoriteButton } from "../components/FavoriteButton";
 
 export const ClubDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -45,7 +44,10 @@ export const ClubDetail = () => {
 
   return (
     <Box sx={{ px: 4, py: 3 }}>
-      <TitleDescription title={club.nombre} description={club.descripcion} />
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <TitleDescription title={club.nombre} description={club.descripcion} /> 
+        <FavoriteButton tipo="club" id={club.clubId} />
+      </Box>
 
       {/* Entrenamientos arriba */}
       {club.entrenamientos && club.entrenamientos.length > 0 && (

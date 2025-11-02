@@ -1,14 +1,8 @@
-// rolService.ts
-
 export type RolRequest = {
   nombreRol: string;
 };
 
 const BASE_URL = "http://localhost:8080";
-
-// ==========================
-// ENDPOINTS
-// ==========================
 
 // Listar todos los roles
 export const getRoles = async (): Promise<any[]> => {
@@ -54,9 +48,6 @@ export const deleteRol = async (idRol: number): Promise<void> => {
   if (!res.ok) throw new Error("Error al eliminar rol");
 };
 
-// ==========================
-// BUSCAR ROLES POR NOMBRE
-// ==========================
 // Permite búsqueda parcial o completa por nombreRol
 export const buscarRoles = async (nombre: string): Promise<any[]> => {
   const query = new URLSearchParams({ nombre }).toString();

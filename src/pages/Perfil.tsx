@@ -1,6 +1,5 @@
-// src/pages/Perfil.tsx
 import { useState, useEffect } from "react";
-import { Box, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
+import { Box, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button, useTheme } from "@mui/material";
 import { BlueButton, OrangeButton } from "../components/CustomButton";
 import { CustomTextField } from "../components/CustomTextField";
 import { useUsuario } from "../context/UsuarioContext";
@@ -10,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 export const Perfil = () => {
   const { usuario, setUsuario } = useUsuario();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const [nombre, setNombre] = useState(usuario?.nombre || "");
   const [email, setEmail] = useState(usuario?.email || "");
@@ -26,48 +26,51 @@ export const Perfil = () => {
   }, [usuario]);
 
   const handleGuardar = async () => {
-    try {
-      setMensaje("");
+  try {
+    setMensaje("");
 
-      if (!usuario) {
-        setMensaje("Debes iniciar sesión para editar tu perfil.");
-        return;
-      }
-
-      // Validar contraseña actual antes de cambiar algo
-      if (contraseñaActual) {
-        try {
-          await loginUsuario(usuario.email, contraseñaActual);
-        } catch {
-          setMensaje("❌ Contraseña actual incorrecta.");
-          return;
-        }
-      } else {
-        setMensaje("⚠️ Debes ingresar tu contraseña actual para guardar cambios.");
-        return;
-      }
-
-      // Crear objeto con los datos actualizados
-      const usuarioActualizado = {
-        nombre,
-        email,
-        contraseña: nuevaContraseña || contraseñaActual, // si no cambia, se mantiene
-        rolId: usuario.rolId,
-      };
-
-      const actualizado = await updateUsuario(usuario.id_usuario, usuarioActualizado);
-
-      setUsuario(actualizado);
-      localStorage.setItem("usuario", JSON.stringify(actualizado));
-
-      setMensaje("✅ Datos actualizados correctamente.");
-      setContraseñaActual("");
-      setNuevaContraseña("");
-    } catch (error) {
-      console.error(error);
-      setMensaje("❌ Error al actualizar los datos.");
+    if (!usuario) {
+      setMensaje("Debes iniciar sesión para editar tu perfil.");
+      return;
     }
-  };
+
+    // Validar contraseña actual antes de cambiar algo
+    if (!contraseñaActual) {
+      setMensaje("Debes ingresar tu contraseña actual para guardar cambios.");
+      return;
+    }
+
+    try {
+      await loginUsuario(usuario.email, contraseñaActual);
+    } catch {
+      setMensaje("❌ Contraseña actual incorrecta.");
+      return;
+    }
+
+    // Crear objeto con los datos actualizados
+    const usuarioActualizado = {
+      usuarioId: usuario.usuarioId,
+      nombre,
+      email,
+      contraseña: nuevaContraseña || contraseñaActual, // si no cambia, se mantiene
+      rolId: usuario.rolId,
+    };
+
+    // Llamada al servicio usando la propiedad correcta
+    const actualizado = await updateUsuario(usuario.usuarioId, usuarioActualizado);
+
+    setUsuario(actualizado);
+    localStorage.setItem("usuario", JSON.stringify(actualizado));
+
+    setMensaje("Datos actualizados correctamente.");
+    setContraseñaActual("");
+    setNuevaContraseña("");
+  } catch (error) {
+    console.error(error);
+    setMensaje("❌ Error al actualizar los datos.");
+  }
+};
+
 
   // Eliminar cuenta
   const handleEliminar = async () => {
@@ -137,9 +140,20 @@ export const Perfil = () => {
         />
 
         {mensaje && (
-          <Typography sx={{ color: mensaje.includes("Error") || mensaje.includes("❌") ? "red" : "green", mt: 1 }}>
+          <Box
+            sx={{
+              mt: 1,
+              p: 1.5,
+              borderRadius: 2,
+              backgroundColor:theme.palette.background.default,
+              color: mensaje.includes("❌") ? theme.palette.secondary.main : theme.palette.primary.main,
+              textAlign: "center",
+              fontWeight: 500,
+              boxShadow: 1,
+            }}
+          >
             {mensaje}
-          </Typography>
+          </Box>
         )}
 
         <BlueButton fullWidth onClick={handleGuardar}>Guardar cambios</BlueButton>

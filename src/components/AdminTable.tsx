@@ -66,7 +66,13 @@ export const AdminTable: React.FC<AdminTableProps> = ({
           overflow: "hidden",
         }}
       >
-        <Box component="thead" sx={{ backgroundColor: theme.palette.primary.light, color: theme.palette.common.white }}>
+        <Box
+          component="thead"
+          sx={{
+            backgroundColor: theme.palette.primary.light,
+            color: theme.palette.common.white,
+          }}
+        >
           <Box component="tr">
             {columns.map((col) => (
               <Box component="th" key={col.key} sx={{ p: 2, textAlign: "left" }}>
@@ -82,49 +88,57 @@ export const AdminTable: React.FC<AdminTableProps> = ({
         </Box>
 
         <Box component="tbody">
-          {data.map((item) => (
-            <Box component="tr" key={item.carreraId} sx={{ borderBottom: "1px solid #ccc" }}>
-              {columns.map((col) => (
-                <Box component="td" sx={{ p: 2 }} key={col.key}>
-                  {col.render ? col.render(item) : item[col.key]}
-                </Box>
-              ))}
-              {(onEdit || onDelete) && (
-                <Box component="td" sx={{ p: 2, display: "flex", gap: 1 }}>
-                  {onEdit && (
-                    <button
-                      style={{
-                        padding: "4px 8px",
-                        backgroundColor: theme.palette.success.main,
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 4,
-                        cursor: "pointer",
-                      }}
-                      onClick={() => onEdit(item)}
-                    >
-                      Editar
-                    </button>
-                  )}
-                  {onDelete && (
-                    <button
-                      style={{
-                        padding: "4px 8px",
-                        backgroundColor: theme.palette.error.main,
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 4,
-                        cursor: "pointer",
-                      }}
-                      onClick={() => onDelete(item)}
-                    >
-                      Eliminar
-                    </button>
-                  )}
-                </Box>
-              )}
-            </Box>
-          ))}
+          {data.map((item, rowIndex) => {
+            // Usar un key único por fila: id si existe, sino fallback al índice
+            const rowKey = item.id ?? item.usuarioId ?? item.clubId ?? item.comentarioId ?? rowIndex;
+            return (
+              <Box component="tr" key={rowKey} sx={{ borderBottom: "1px solid #ccc" }}>
+                {columns.map((col, colIndex) => (
+                  <Box
+                    component="td"
+                    sx={{ p: 2 }}
+                    key={col.key + "-" + colIndex} // clave única por columna
+                  >
+                    {col.render ? col.render(item) : item[col.key]}
+                  </Box>
+                ))}
+                {(onEdit || onDelete) && (
+                  <Box component="td" sx={{ p: 2, display: "flex", gap: 1 }}>
+                    {onEdit && (
+                      <button
+                        style={{
+                          padding: "4px 8px",
+                          backgroundColor: theme.palette.success.main,
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: 4,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => onEdit(item)}
+                      >
+                        Editar
+                      </button>
+                    )}
+                    {onDelete && (
+                      <button
+                        style={{
+                          padding: "4px 8px",
+                          backgroundColor: theme.palette.error.main,
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: 4,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => onDelete(item)}
+                      >
+                        Eliminar
+                      </button>
+                    )}
+                  </Box>
+                )}
+              </Box>
+            );
+          })}
         </Box>
       </Box>
     </Box>

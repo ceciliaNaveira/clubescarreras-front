@@ -1,53 +1,35 @@
-// AdminNuevoComentarioForm.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button } from "@mui/material";
+import { Box, Button, MenuItem, TextField } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-import { TextInput } from "../../components/TextInput";
-import { SelectInput } from "../../components/SelectInput";
-
 import { type Club, getClubs } from "../../services/clubService";
-import { type UsuarioRequest, getUsuarios } from "../../services/usuarioService";
 import { type ComentarioRequest, createComentario } from "../../services/comentarioService";
-import { getRoles } from "../../services/rolService";
+import { useUsuario } from "../../context/UsuarioContext";
 
 export const AdminNuevoComentarioForm = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { usuario } = useUsuario(); // Usuario logueado desde el contexto
 
   const [comentario, setComentario] = useState<Partial<ComentarioRequest>>({});
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchClubs = async () => {
       setLoading(true);
       try {
-        // Cargar clubs
         const allClubs = await getClubs();
         setClubs(allClubs);
-
-        // Cargar usuarios y filtrar admin
-        const usuarios = await getUsuarios();
-        const roles = await getRoles();
-        const adminRole = roles.find(r => r.nombreRol.toLowerCase() === "admin");
-
-        if (adminRole) {
-          const adminUsuario = usuarios.find(u => u.rolId === adminRole.rolId);
-          if (adminUsuario) {
-            // Preseleccionamos automáticamente el admin
-            setComentario(prev => ({ ...prev, usuarioId: adminUsuario.usuarioId }));
-          }
-        }
       } catch (err) {
         console.error(err);
-        alert("Error cargando datos");
+        alert("Error cargando clubs");
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
+    fetchClubs();
   }, []);
 
   const handleChange = (field: keyof ComentarioRequest, value: any) => {
@@ -55,18 +37,49 @@ export const AdminNuevoComentarioForm = () => {
   };
 
   const handleSubmit = async () => {
-    try {
-      if (!comentario.usuarioId || !comentario.clubId || !comentario.texto || !comentario.valoracion) {
-        alert("Rellene todos los campos obligatorios");
-        return;
-      }
+    if (!usuario) {
+      alert("No hay usuario logueado");
+      return;
+    }
 
-      await createComentario(comentario as ComentarioRequest);
+    const usuarioId = usuario.usuarioId;
+    const clubId = Number(comentario.clubId);
+    const texto = comentario.texto?.trim() || "";
+    const valoracion = Number(comentario.valoracion);
+
+    console.log("Valores antes de la validación:", {
+      usuarioId,
+      clubId,
+      texto,
+      valoracion,
+    });
+
+    if (!usuarioId || !clubId || !texto || isNaN(valoracion)) {
+      alert("Rellene todos los campos obligatorios");
+      return;
+    }
+
+    if (valoracion < 1 || valoracion > 5) {
+      alert("La valoración debe ser un número entre 1 y 5");
+      return;
+    }
+
+    const payload: ComentarioRequest = {
+      usuarioId,
+      clubId,
+      texto,
+      valoracion,
+    };
+
+    console.log("Enviando comentario:", payload);
+
+    try {
+      await createComentario(payload);
       alert("Comentario creado correctamente");
       navigate("/admin/comentarios");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Error al crear comentario");
+      alert(`Error al crear comentario: ${err.message}`);
     }
   };
 
@@ -84,47 +97,81 @@ export const AdminNuevoComentarioForm = () => {
         </Button>
       </Box>
 
-      <Box sx={{ width: "100%", backgroundColor: "#fff", borderRadius: 2, boxShadow: "0 2px 6px rgba(0,0,0,0.1)", p: 3 }}>
+      <Box
+        sx={{
+          width: "100%",
+          backgroundColor: "#fff",
+          borderRadius: 2,
+          boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+          p: 3,
+        }}
+      >
         <h2 style={{ color: theme.palette.primary.main }}>Nuevo Comentario</h2>
 
-        {/* Usuario admin fijo */}
-        <TextInput
-          label="Usuario (Admin)"
-          value="Cecilia Naveira"
+        {/* Usuario logueado */}
+        <TextField
+          label="Usuario"
+          value={usuario?.nombre || ""}
           disabled
           fullWidth
+          sx={{ mb: 2 }}
+          InputLabelProps={{ style: { color: theme.palette.primary.main } }}
+          InputProps={{ style: { color: theme.palette.primary.main } }}
         />
 
         {/* Seleccionar club */}
-        <SelectInput
+        <TextField
+          select
           label="Club"
           value={comentario.clubId || ""}
-          onChange={val => handleChange("clubId", Number(val))}
-          options={clubs.map(c => ({ value: c.clubId, label: c.nombre }))}
+          onChange={e => handleChange("clubId", Number(e.target.value))}
           fullWidth
-        />
+          sx={{ mb: 2 }}
+          InputLabelProps={{ style: { color: theme.palette.primary.main } }}
+          InputProps={{ style: { color: theme.palette.primary.main } }}
+        >
+          <MenuItem value="" disabled sx={{ color: "#fff" }}>Seleccione un club</MenuItem>
+          {clubs.map(c => (
+            <MenuItem key={c.clubId} value={c.clubId} sx={{ color: "#fff" }}>
+              {c.nombre}
+            </MenuItem>
+          ))}
+        </TextField>
 
         {/* Texto del comentario */}
-        <TextInput
+        <TextField
           label="Texto"
           value={comentario.texto || ""}
-          onChange={val => handleChange("texto", val)}
+          onChange={e => handleChange("texto", e.target.value)}
           multiline
           rows={3}
           fullWidth
+          sx={{ mb: 2 }}
+          InputLabelProps={{ style: { color: theme.palette.primary.main } }}
+          InputProps={{ style: { color: theme.palette.primary.main } }}
         />
 
         {/* Valoración */}
-        <TextInput
-          label="Valoración (1-5)"
-          type="number"
+        <TextField
+          select
+          label="Valoración"
           value={comentario.valoracion || ""}
-          onChange={val => handleChange("valoracion", Number(val))}
+          onChange={e => handleChange("valoracion", Number(e.target.value))}
           fullWidth
-        />
+          sx={{ mb: 2 }}
+          InputLabelProps={{ style: { color: theme.palette.primary.main } }}
+          InputProps={{ style: { color: theme.palette.primary.main } }}
+        >
+          <MenuItem value="" disabled sx={{ color: "#fff" }}>Seleccione valoración</MenuItem>
+          {[1, 2, 3, 4, 5].map(n => (
+            <MenuItem key={n} value={n} sx={{ color: "#fff" }}>
+              {n}
+            </MenuItem>
+          ))}
+        </TextField>
 
         {/* Botones */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
           <Button variant="outlined" color="secondary" onClick={() => navigate("/admin/comentarios")}>
             Cancelar
           </Button>

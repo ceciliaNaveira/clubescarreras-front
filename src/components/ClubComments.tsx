@@ -117,7 +117,6 @@ export const ClubComments = ({ clubId, usuarioId, usuarioNombre }: ClubCommentsP
                     vertical: "top",
                     horizontal: "left",
                 },
-                getContentAnchorEl: null,
                 },
             }}
             >

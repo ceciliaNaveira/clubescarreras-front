@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Box, Button } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 import { type Club, getClubs } from "../../services/clubService";
 import { type Localizacion, saveLocalizacion } from "../../services/localizacionService";
 import { type Carrera, saveCarrera } from "../../services/carreraService";
-
-import { Box, Button } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 
 import { TextInput } from "../../components/TextInput";
 import { SelectInput } from "../../components/SelectInput";
@@ -20,7 +19,6 @@ export const AdminNuevaCarreraForm = () => {
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Cargar clubs
   useEffect(() => {
     const fetchClubs = async () => {
       try {
@@ -45,19 +43,19 @@ export const AdminNuevaCarreraForm = () => {
   };
 
   const handleSubmit = async () => {
-    try {
-      // Guardar localización primero si no existe ID
-      let locId = localizacion.localizacionId;
-      if (!locId) {
-        const locCreada = await saveLocalizacion(localizacion);
-        locId = locCreada.localizacionId;
-      }
+    // Validación obligatoria de club
+    if (!carrera.clubId) {
+      alert("Debes seleccionar un club");
+      return;
+    }
 
-      // Guardar carrera usando localizacionId
-      const carreraToSave = {
+    try {
+      // Guardar localización primero
+      const locCreada = await saveLocalizacion(localizacion);
+
+      const carreraToSave: Partial<Carrera> = {
         ...carrera,
-        clubId: carrera.clubId || null,
-        localizacionId: locId
+        localizacionId: locCreada.localizacionId,
       };
 
       await saveCarrera(carreraToSave);
@@ -82,19 +80,9 @@ export const AdminNuevaCarreraForm = () => {
         </Button>
       </Box>
 
-      <Box
-        sx={{
-          width: "100%",
-          backgroundColor: "#fff",
-          borderRadius: 2,
-          boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-          p: 3,
-          mb: 3,
-        }}
-      >
+      <Box sx={{ width: "100%", backgroundColor: "#fff", borderRadius: 2, boxShadow: "0 2px 6px rgba(0,0,0,0.1)", p: 3, mb: 3 }}>
         <h2 style={{ color: theme.palette.primary.main }}>Nueva Carrera</h2>
 
-        {/* Bloque Carrera */}
         <TextInput
           label="Nombre"
           value={carrera.nombre || ""}
@@ -107,14 +95,15 @@ export const AdminNuevaCarreraForm = () => {
           label="Club"
           value={carrera.clubId || ""}
           onChange={val => handleCarreraChange("clubId", Number(val))}
-          options={[{ value: "", label: "-- Sin club --" }, ...clubs.map(club => ({ value: club.idClub, label: club.nombre }))]}
+          options={clubs.map(club => ({ value: club.clubId, label: club.nombre }))}
           fullWidth
+          required
         />
 
         <TextInput
           label="Fecha"
           type="date"
-          value={carrera.fecha ? carrera.fecha.toString() : ""}
+          value={carrera.fecha ? new Date(carrera.fecha).toISOString().split("T")[0] : ""}
           onChange={val => handleCarreraChange("fecha", val)}
         />
 
@@ -139,49 +128,17 @@ export const AdminNuevaCarreraForm = () => {
           rows={3}
         />
 
-        {/* Bloque Localización */}
         <h3 style={{ color: theme.palette.primary.main }}>Localización</h3>
-        <TextInput
-          label="Provincia"
-          value={localizacion.provincia || ""}
-          onChange={val => handleLocalizacionChange("provincia", val)}
-        />
-        <TextInput
-          label="Municipio"
-          value={localizacion.municipio || ""}
-          onChange={val => handleLocalizacionChange("municipio", val)}
-        />
-        <TextInput
-          label="Código Postal"
-          value={localizacion.codigoPostal || ""}
-          onChange={val => handleLocalizacionChange("codigoPostal", val)}
-        />
-        <TextInput
-          label="Dirección"
-          value={localizacion.direccion || ""}
-          onChange={val => handleLocalizacionChange("direccion", val)}
-        />
-        <TextInput
-          label="Latitud"
-          type="number"
-          value={localizacion.latitud || ""}
-          onChange={val => handleLocalizacionChange("latitud", parseFloat(val))}
-        />
-        <TextInput
-          label="Longitud"
-          type="number"
-          value={localizacion.longitud || ""}
-          onChange={val => handleLocalizacionChange("longitud", parseFloat(val))}
-        />
+        <TextInput label="Provincia" value={localizacion.provincia || ""} onChange={val => handleLocalizacionChange("provincia", val)} />
+        <TextInput label="Municipio" value={localizacion.municipio || ""} onChange={val => handleLocalizacionChange("municipio", val)} />
+        <TextInput label="Código Postal" value={localizacion.codigoPostal || ""} onChange={val => handleLocalizacionChange("codigoPostal", val)} />
+        <TextInput label="Dirección" value={localizacion.direccion || ""} onChange={val => handleLocalizacionChange("direccion", val)} />
+        <TextInput label="Latitud" type="number" value={localizacion.latitud || ""} onChange={val => handleLocalizacionChange("latitud", parseFloat(val))} />
+        <TextInput label="Longitud" type="number" value={localizacion.longitud || ""} onChange={val => handleLocalizacionChange("longitud", parseFloat(val))} />
 
-        {/* Botones */}
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}>
-          <Button variant="outlined" color="secondary" onClick={() => navigate("/admin/carreras")}>
-            Cancelar
-          </Button>
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Guardar
-          </Button>
+          <Button variant="outlined" color="secondary" onClick={() => navigate("/admin/carreras")}>Cancelar</Button>
+          <Button variant="contained" color="primary" onClick={handleSubmit}>Guardar</Button>
         </Box>
       </Box>
     </Box>

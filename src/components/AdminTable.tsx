@@ -83,7 +83,7 @@ export const AdminTable: React.FC<AdminTableProps> = ({
 
         <Box component="tbody">
           {data.map((item) => (
-            <Box component="tr" key={item.id || item.clubId || item.carreraId} sx={{ borderBottom: "1px solid #ccc" }}>
+            <Box component="tr" key={item.carreraId} sx={{ borderBottom: "1px solid #ccc" }}>
               {columns.map((col) => (
                 <Box component="td" sx={{ p: 2 }} key={col.key}>
                   {col.render ? col.render(item) : item[col.key]}

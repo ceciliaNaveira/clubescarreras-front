@@ -7,7 +7,7 @@ import { type Entrenamiento, getEntrenamientosByClubId } from "../services/entre
 import SearchBar from "../components/SearchBar";
 import FiltroDiaSemana from "../components/FiltroDiaSemana";
 import TitleDescription from "../components/TitleDescription";
-import { Box } from "@mui/material";
+import { Box, useTheme, useMediaQuery } from "@mui/material";
 import { ListPage } from "../components/ListPage";
 
 const DIAS_SEMANA = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
@@ -18,6 +18,9 @@ export const Clubs = () => {
   const [search, setSearch] = useState<string>("");
   const [diaSemanaFiltro, setDiaSemanaFiltro] = useState<string>("");
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const fetchClubs = async () => {
     setLoading(true);
     try {
@@ -25,7 +28,6 @@ export const Clubs = () => {
 
       const clubsWithDetails = await Promise.all(
         allClubs.map(async c => {
-          // Cargar solo entrenamientos de este club usando clubId
           const entrenamientos: Entrenamiento[] = await getEntrenamientosByClubId(c.clubId);
           const loc: Localizacion = await getLocalizacionById(c.localizacionId);
           return { ...c, entrenamientos, localizacion: loc };
@@ -48,7 +50,6 @@ export const Clubs = () => {
   if (loading) return <p>Cargando clubes...</p>;
   if (!clubs.length) return <p>No hay clubes disponibles</p>;
 
-  // Filtrado combinado por búsqueda y día de entrenamiento
   const filteredClubs = clubs.filter(c => {
     const matchName = c.nombre?.toLowerCase().includes(search.toLowerCase()) ?? false;
     const matchDia =
@@ -58,21 +59,33 @@ export const Clubs = () => {
   });
 
   return (
-    <div>
+    <Box sx={{ px: 2 }}>
       {/* Título y descripción */}
-      <Box sx={{ px: 2, mt: 2, mb: 2 }}>
+      <Box sx={{ mt: 2, mb: 2 }}>
         <TitleDescription
           title="Clubes entrenamiento Galicia"
           description="Encuentra clubes donde preparar tu próxima carrera"
+          sx={{
+            title: { fontSize: isMobile ? "1.5rem" : "2rem" },
+            description: { fontSize: isMobile ? "0.9rem" : "1rem" },
+          }}
         />
       </Box>
 
       {/* Buscador + filtro por día */}
-      <Box sx={{ px: 4, display: "flex", gap: 2, alignItems: "center" }}>
-        <Box sx={{ flex: 1 }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          gap: 2,
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Box sx={{ flex: 1, width: "100%" }}>
           <SearchBar search={search} setSearch={setSearch} />
         </Box>
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, width: "100%" }}>
           <FiltroDiaSemana
             diaSemanaFiltro={diaSemanaFiltro}
             setDiaSemanaFiltro={setDiaSemanaFiltro}
@@ -87,15 +100,22 @@ export const Clubs = () => {
         title=""
         description=""
         items={filteredClubs.map(c => ({
-          id: c.clubId.toString(),           // <- CORREGIDO
+          id: c.clubId.toString(),
           label: c.nombre ?? "Sin nombre",
           lat: c.localizacion?.latitud ?? 0,
           lng: c.localizacion?.longitud ?? 0,
           description: c.descripcion ?? "",
         }))}
-        getDetailLink={club => `/clubs/${club.id}`} // club.id aquí es el clubId string
+        getDetailLink={club => `/clubs/${club.id}`}
         search={search}
+        sxMap={{
+          order: { xs: 1, md: 0 },
+          height: { xs: 250, md: 400 },
+        }}
+        sxList={{
+          order: { xs: 2, md: 1 },
+        }}
       />
-    </div>
+    </Box>
   );
 };

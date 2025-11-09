@@ -119,7 +119,18 @@ export const ClubComments = ({ clubId }: ClubCommentsProps) => {
   return (
     <Box>
       {/* Valoración media */}
-      <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
+      <Box 
+        sx={{ 
+          mb: 2, 
+          display: "flex", 
+          alignItems: "center", 
+          gap: 1, 
+          p: 2,               // padding
+          bgcolor: "background.paper", // fondo, usa el tema de MUI
+          borderRadius: 1,     // esquinas redondeadas
+          boxShadow: 1         // sombra ligera
+        }}
+      >
         <Typography>Valoración media:</Typography>
         <Rating value={valoracionMedia} precision={0.5} readOnly />
         <Typography>({comentarios.length} comentarios)</Typography>

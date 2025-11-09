@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { type Club, getClubById } from "../services/clubService";
 import { type Localizacion, getLocalizacionById } from "../services/localizacionService";
 import { type Entrenamiento, getEntrenamientosByClubId } from "../services/entrenamientoService";
-import { Box, Card, CardContent, Typography, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { Box, Card, CardContent, Typography, Table, TableHead, TableRow, TableCell, TableBody, Grid } from "@mui/material";
 import TitleDescription from "../components/TitleDescription";
 import { ClubComments } from "../components/ClubComments";
 import { FavoriteButton } from "../components/FavoriteButton";
@@ -44,12 +44,13 @@ export const ClubDetail = () => {
 
   return (
     <Box sx={{ px: 4, py: 3 }}>
+      {/* Título y botón favorito */}
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <TitleDescription title={club.nombre} description={club.descripcion} /> 
         <FavoriteButton tipo="club" id={club.clubId} />
       </Box>
 
-      {/* Entrenamientos arriba */}
+      {/* Entrenamientos arriba, ocupando todo el ancho */}
       {club.entrenamientos && club.entrenamientos.length > 0 && (
         <Card sx={{ mt: 3 }}>
           <CardContent>
@@ -87,13 +88,15 @@ export const ClubDetail = () => {
         </Card>
       )}
 
-      {/* Comentarios izquierda y datos/localización derecha */}
-      <Box sx={{ display: "flex", gap: 3, mt: 3, flexWrap: "wrap" }}>
-        <Box sx={{ flex: 1, minWidth: 300 }}>
+      {/* Comentarios y datos/localización en columnas */}
+      <Grid container spacing={3} sx={{ mt: 3 }}>
+        {/* Comentarios - ocupa el resto */}
+        <Grid item xs={12} md sx={{ flexGrow: 1, minWidth: 0 }}>
           <ClubComments clubId={club.clubId} />
-        </Box>
+        </Grid>
 
-        <Box sx={{ flex: 1, minWidth: 250 }}>
+        {/* Columna derecha - ancho fijo */}
+        <Grid item xs={12} md="auto" sx={{ width: 250 }}>
           {club.localizacion && (
             <Card sx={{ mb: 2 }}>
               <CardContent>
@@ -112,8 +115,8 @@ export const ClubDetail = () => {
               <Typography>Web: <a href={club.web} target="_blank">{club.web}</a></Typography>
             </CardContent>
           </Card>
-        </Box>
-      </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

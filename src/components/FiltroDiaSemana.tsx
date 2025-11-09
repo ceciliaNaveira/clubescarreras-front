@@ -23,10 +23,17 @@ const FiltroDiaSemana: React.FC<FiltroDiaSemanaProps> = ({
           onChange={(e) => setDiaSemanaFiltro(e.target.value)}
           label="Filtrar día"
           fullWidth
+          sx={{
+            color: 'text.secondary', // texto del valor seleccionado
+            '& .MuiSelect-select': { color: 'text.secondary' }, // asegura que el texto seleccionado sea secondary
+          }}
+          inputProps={{ 'aria-label': 'Filtrar por día de entrenamiento' }}
         >
-          <MenuItem value="">Todos</MenuItem>
+          <MenuItem value="" sx={{ color: 'text.primary' }}>Todos</MenuItem>
           {diasSemana.map((d) => (
-            <MenuItem key={d} value={d}>{d}</MenuItem>
+            <MenuItem key={d} value={d} sx={{ color: 'text.primary' }}>
+              {d}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>

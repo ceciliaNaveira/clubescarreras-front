@@ -63,7 +63,12 @@ export const RaceDetail = () => {
             {carrera.webOficial && (
               <Typography>
                 Web:{" "}
-                <a href={carrera.webOficial} target="_blank" rel="noreferrer">
+                <a 
+                  href={carrera.webOficial} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  style={{ color: "#fff", textDecoration: "underline" }} // texto blanco
+                >
                   {carrera.webOficial}
                 </a>
               </Typography>

@@ -16,6 +16,10 @@ import {
   Grid,
   useMediaQuery,
   useTheme,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import TitleDescription from "../components/TitleDescription";
 import { ClubComments } from "../components/ClubComments";
@@ -27,7 +31,7 @@ export const ClubDetail = () => {
   const [loading, setLoading] = useState(true);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // detectar móvil
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const fetchClub = async () => {
@@ -70,19 +74,20 @@ export const ClubDetail = () => {
         <TitleDescription
           title={club.nombre}
           description={club.descripcion}
-          titleVariant={isMobile ? "h5" : "h4"} // reducimos tamaño en móvil
+          titleVariant={isMobile ? "h5" : "h4"}
         />
         <FavoriteButton tipo="club" id={club.clubId} />
       </Box>
 
-      {/* Entrenamientos arriba, ocupando todo el ancho */}
+      {/* Entrenamientos */}
       {club.entrenamientos && club.entrenamientos.length > 0 && (
         <Card sx={{ mt: 3 }}>
           <CardContent>
-            <Typography variant={isMobile ? "subtitle1" : "h6"}>Entrenamientos</Typography>
+            <Typography variant={isMobile ? "subtitle1" : "h6"} component="h3">
+              Entrenamientos
+            </Typography>
 
             {isMobile ? (
-              // Lista vertical en móvil
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
                 {club.entrenamientos
                   .sort((a, b) => {
@@ -93,17 +98,16 @@ export const ClubDetail = () => {
                   })
                   .map(e => (
                     <Card key={e.entrenamientoId} sx={{ p: 2, backgroundColor: "background.default" }}>
-                      <Typography><strong>Día:</strong> {e.diaSemana}</Typography>
-                      <Typography><strong>Hora:</strong> {e.hora?.substring(0, 5)}</Typography>
-                      <Typography><strong>Lugar:</strong> {e.lugarEntrenamiento}</Typography>
-                      <Typography><strong>Nivel:</strong> {e.nivel}</Typography>
-                      {e.descripcion && <Typography><strong>Descripción:</strong> {e.descripcion}</Typography>}
+                      <Typography component="p"><strong>Día:</strong> {e.diaSemana}</Typography>
+                      <Typography component="p"><strong>Hora:</strong> {e.hora?.substring(0, 5)}</Typography>
+                      <Typography component="p"><strong>Lugar:</strong> {e.lugarEntrenamiento}</Typography>
+                      <Typography component="p"><strong>Nivel:</strong> {e.nivel}</Typography>
+                      {e.descripcion && <Typography component="p"><strong>Descripción:</strong> {e.descripcion}</Typography>}
                     </Card>
                   ))}
               </Box>
             ) : (
-              // Tabla para escritorio
-              <Table size="small">
+              <Table size="small" aria-label="Tabla de entrenamientos">
                 <TableHead>
                   <TableRow>
                     <TableCell>Día</TableCell>
@@ -123,7 +127,7 @@ export const ClubDetail = () => {
                     })
                     .map(e => (
                       <TableRow key={e.entrenamientoId}>
-                        <TableCell>{e.diaSemana}</TableCell>
+                        <TableCell component="th" scope="row">{e.diaSemana}</TableCell>
                         <TableCell>{e.hora?.substring(0, 5)}</TableCell>
                         <TableCell>{e.lugarEntrenamiento}</TableCell>
                         <TableCell>{e.nivel}</TableCell>
@@ -137,24 +141,26 @@ export const ClubDetail = () => {
         </Card>
       )}
 
-      {/* Comentarios y datos/localización en columnas */}
+      {/* Comentarios y localización */}
       <Grid container spacing={3} sx={{ mt: 3, flexDirection: isMobile ? "column" : "row" }}>
-        {/* Comentarios - ocupa todo el ancho en móvil */}
+        {/* Comentarios */}
         <Grid item xs={12} md sx={{ flexGrow: 1, minWidth: 0 }}>
           <ClubComments clubId={club.clubId} />
         </Grid>
 
-        {/* Columna derecha - ancho fijo en desktop, ancho completo en móvil */}
+        {/* Localización y datos del club */}
         <Grid item xs={12} md="auto" sx={{ width: isMobile ? "100%" : 250 }}>
           {club.localizacion && (
             <Card sx={{ mb: 2 }}>
               <CardContent>
-                <Typography variant={isMobile ? "subtitle1" : "h6"}>Localización</Typography>
-                <Typography>Dirección: {club.localizacion.direccion}</Typography>
-                <Typography>
+                <Typography variant={isMobile ? "subtitle1" : "h6"} component="h3">
+                  Localización
+                </Typography>
+                <Typography component="p">Dirección: {club.localizacion.direccion}</Typography>
+                <Typography component="p">
                   {club.localizacion.municipio}, {club.localizacion.provincia} ({club.localizacion.codigoPostal})
                 </Typography>
-                <Typography>
+                <Typography component="p">
                   Lat/Lng: {club.localizacion.latitud}, {club.localizacion.longitud}
                 </Typography>
               </CardContent>
@@ -163,10 +169,21 @@ export const ClubDetail = () => {
 
           <Card>
             <CardContent>
-              <Typography variant={isMobile ? "subtitle1" : "h6"}>Datos del club</Typography>
-              <Typography>Contacto: {club.contacto}</Typography>
-              <Typography>
-                Web: <a href={club.web} target="_blank">{club.web}</a>
+              <Typography variant={isMobile ? "subtitle1" : "h6"} component="h3">
+                Datos del club
+              </Typography>
+              <Typography component="p">Contacto: {club.contacto}</Typography>
+              <Typography component="p">
+                Web:{" "}
+                <Box 
+                  component="a"
+                  href={club.web}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ color: 'text.primary', textDecoration: 'underline' }}
+                >
+                  {club.web}
+                </Box>
               </Typography>
             </CardContent>
           </Card>

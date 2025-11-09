@@ -12,7 +12,7 @@ export const Footer = () => {
         borderColor: "divider",
       }}
     >
-      <Typography sx={{ fontSize: "0.6rem", color: "text.primary" }}>
+      <Typography sx={{ fontSize: "1rem", color: "text.primary" }}>
         Hecho por Cecilia Naveira 2025
       </Typography>
     </Box>

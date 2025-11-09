@@ -79,6 +79,7 @@ export const Header = () => {
         ) : (
           <IconButton
             sx={{ color: "white" }}
+            aria-label="Abrir menú"
             onClick={toggleDrawer(true)}
           >
             <MenuIcon />
@@ -93,6 +94,7 @@ export const Header = () => {
           {!isMobile && (
             <Typography
               variant="subtitle1"
+              component="p"
               sx={{ color: "white", fontWeight: 500, mr: 1 }}
             >
               {usuario && usuario.nombre
@@ -104,6 +106,7 @@ export const Header = () => {
           {usuario ? (
             <>
               <IconButton
+                aria-label="Configuración de perfil"
                 sx={{ color: "text.primary" }}
                 onClick={() => navigate("/perfil")}
               >
@@ -111,19 +114,25 @@ export const Header = () => {
               </IconButton>
 
               <IconButton
+                aria-label="Ver favoritos"
                 sx={{ color: "text.primary" }}
                 onClick={() => navigate("/favoritos")}
               >
                 <FavoriteBorderOutlinedIcon />
               </IconButton>
 
-              <IconButton sx={{ color: "text.primary" }} onClick={handleLogout}>
+              <IconButton
+                aria-label="Cerrar sesión"
+                sx={{ color: "text.primary" }}
+                onClick={handleLogout}
+              >
                 <LogoutIcon />
               </IconButton>
 
               {esAdmin && (
                 <>
                   <IconButton
+                    aria-label="Menú de administración"
                     sx={{ color: "text.primary" }}
                     onClick={handleMenuOpen}
                   >
@@ -144,9 +153,7 @@ export const Header = () => {
                     <MenuItem onClick={() => handleMenuClick("/admin/usuarios")}>
                       Gestionar Usuarios
                     </MenuItem>
-                    <MenuItem
-                      onClick={() => handleMenuClick("/admin/comentarios")}
-                    >
+                    <MenuItem onClick={() => handleMenuClick("/admin/comentarios")}>
                       Gestionar Comentarios
                     </MenuItem>
                   </Menu>
@@ -155,6 +162,7 @@ export const Header = () => {
             </>
           ) : (
             <IconButton
+              aria-label="Iniciar sesión"
               sx={{ color: "text.primary" }}
               onClick={() => navigate("/login")}
             >
@@ -198,28 +206,16 @@ export const Header = () => {
 
                 {esAdmin && (
                   <>
-                    <ListItem
-                      button
-                      onClick={() => navigate("/admin/clubs")}
-                    >
+                    <ListItem button onClick={() => navigate("/admin/clubs")}>
                       <ListItemText primary="Admin: Clubes" />
                     </ListItem>
-                    <ListItem
-                      button
-                      onClick={() => navigate("/admin/carreras")}
-                    >
+                    <ListItem button onClick={() => navigate("/admin/carreras")}>
                       <ListItemText primary="Admin: Carreras" />
                     </ListItem>
-                    <ListItem
-                      button
-                      onClick={() => navigate("/admin/usuarios")}
-                    >
+                    <ListItem button onClick={() => navigate("/admin/usuarios")}>
                       <ListItemText primary="Admin: Usuarios" />
                     </ListItem>
-                    <ListItem
-                      button
-                      onClick={() => navigate("/admin/comentarios")}
-                    >
+                    <ListItem button onClick={() => navigate("/admin/comentarios")}>
                       <ListItemText primary="Admin: Comentarios" />
                     </ListItem>
                   </>

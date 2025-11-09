@@ -11,7 +11,6 @@ export const BlueButton = styled(Button)<ButtonProps>(({ theme }) => ({
   },
   borderRadius: 8,
   textTransform: "none",
-  fontWeight: 600,
 }));
 
 export const OrangeButton = styled(Button)<ButtonProps>(({ theme }) => ({
@@ -22,5 +21,4 @@ export const OrangeButton = styled(Button)<ButtonProps>(({ theme }) => ({
   },
   borderRadius: 8,
   textTransform: "none",
-  fontWeight: 600,
 }));

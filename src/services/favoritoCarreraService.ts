@@ -24,7 +24,6 @@ export const addFavoritoCarrera = async (usuarioId: number, carreraId: number) =
   });
 
   if (res.status === 409) {
-    // Ya existe, no lanzamos error
     return null;
   }
 

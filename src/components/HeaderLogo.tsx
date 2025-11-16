@@ -7,7 +7,7 @@ export const HeaderLogo = () => {
 
   return (
     <Box
-      component="h1" // Esto define el encabezado principal
+      component="h1"
       onClick={() => navigate("/")}
       sx={{
         display: "flex",
@@ -15,13 +15,13 @@ export const HeaderLogo = () => {
         gap: 1,
         cursor: "pointer",
         "&:hover": { opacity: 0.8 },
-        fontSize: 0, // Oculta texto visual dentro del h1 para que solo se vea la imagen y el span
+        fontSize: 0,
       }}
     >
       <Box
         component="img"
         src={Logo}
-        alt="Bule, ven - Logo" // texto descriptivo accesible
+        alt="Bule, ven - Logo" 
         sx={{ height: 85 }}
       />
       <Box

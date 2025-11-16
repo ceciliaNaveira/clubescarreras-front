@@ -23,43 +23,60 @@ import { AdminNuevoUsuarioForm } from "./pages/Admin/AdminNuevoUsuarioForm";
 import { AdminComentarios } from "./pages/Admin/AdminComentario";
 import { AdminNuevoComentarioForm } from "./pages/Admin/AdminNuevoComentarioForm";
 
+import { Box } from "@mui/material";
+
 function App() {
   return (
-
-      <Router>
+    <Router>
+      <Box
+        sx={{
+          minHeight: "100vh",      
+          display: "flex",         
+          flexDirection: "column", 
+        }}
+      >
+        {/* HEADER */}
         <Header />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/perfil" element={<Perfil />} />
-          <Route path="/clubs" element={<Clubs />} />
-          <Route path="/clubs/:id" element={<ClubDetail />} />
-          <Route path="/races" element={<Races />} />
-          <Route path="/races/:id" element={<RaceDetail />} />
-          <Route path="/favoritos" element={<Favoritos />} />
-          
-          {/* Admin clubes */}
-          <Route path="/admin/clubs" element={<AdminClubs />} />
-          <Route path="/admin/clubs/nuevo" element={<AdminNuevoClubForm />} /> 
-          <Route path="/admin/clubs/editar/:idClub" element={<AdminEditClubForm />} /> 
 
-          {/* Admin carreras */}
-          <Route path="/admin/carreras" element={<AdminCarreras />} />
-          <Route path="/admin/carreras/nueva" element={<AdminNuevaCarreraForm />} />
-          <Route path="/admin/carreras/editar/:idCarrera" element={<AdminEditCarreraForm />} />
+        {/* CONTENIDO */}
+        <Box sx={{ flexGrow: 1 }}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/perfil" element={<Perfil />} />
+            <Route path="/clubs" element={<Clubs />} />
+            <Route path="/clubs/:id" element={<ClubDetail />} />
+            <Route path="/races" element={<Races />} />
+            <Route path="/races/:id" element={<RaceDetail />} />
+            <Route path="/favoritos" element={<Favoritos />} />
 
-          {/* Admin usuarios */}
-          <Route path="/admin/usuarios" element={<AdminUsuarios />} />
-          <Route path="/admin/usuarios/nuevo" element={<AdminNuevoUsuarioForm />} />
-          <Route path="/admin/usuarios/editar/:idUsuario" element={<AdminEditUsuarioForm />} />
+            {/* Admin clubes */}
+            <Route path="/admin/clubs" element={<AdminClubs />} />
+            <Route path="/admin/clubs/nuevo" element={<AdminNuevoClubForm />} /> 
+            <Route path="/admin/clubs/editar/:idClub" element={<AdminEditClubForm />} /> 
 
-          {/* Admin comentarios */}
-          <Route path="/admin/comentarios" element={<AdminComentarios />} />
-          <Route path="/admin/comentarios/nuevo" element={<AdminNuevoComentarioForm />} />
-        </Routes>
+            {/* Admin carreras */}
+            <Route path="/admin/carreras" element={<AdminCarreras />} />
+            <Route path="/admin/carreras/nueva" element={<AdminNuevaCarreraForm />} />
+            <Route path="/admin/carreras/editar/:idCarrera" element={<AdminEditCarreraForm />} />
+
+            {/* Admin usuarios */}
+            <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+            <Route path="/admin/usuarios/nuevo" element={<AdminNuevoUsuarioForm />} />
+            <Route path="/admin/usuarios/editar/:idUsuario" element={<AdminEditUsuarioForm />} />
+
+            {/* Admin comentarios */}
+            <Route path="/admin/comentarios" element={<AdminComentarios />} />
+            <Route path="/admin/comentarios/nuevo" element={<AdminNuevoComentarioForm />} />
+          </Routes>
+        </Box>
+
+        {/* FOOTER */}
         <Footer />
-      </Router>
+
+      </Box>
+    </Router>
   );
 }
 

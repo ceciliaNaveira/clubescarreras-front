@@ -15,10 +15,10 @@ const TitleDescription: React.FC<TitleDescriptionProps> = ({ title, description 
       {/* Título principal accesible */}
       <Typography
         variant="h4"
-        component="h2"  // semántica adecuada
+        component="h2"  
         sx={{
           fontWeight: 700,
-          color: "text.secondary", // mejor contraste
+          color: "text.secondary", 
           fontSize: isMobile ? "1.5rem" : "2rem",
           textAlign: "left",
           lineHeight: 1.2
@@ -32,8 +32,8 @@ const TitleDescription: React.FC<TitleDescriptionProps> = ({ title, description 
         component="p"
         sx={{
           color: "text.secondary",
-          maxWidth: "100%",   // no limitar demasiado
-          textAlign: "left",  // lectura más natural
+          maxWidth: "100%", 
+          textAlign: "left", 
           fontSize: isMobile ? "0.9rem" : "1rem",
           mt: 1,
         }}

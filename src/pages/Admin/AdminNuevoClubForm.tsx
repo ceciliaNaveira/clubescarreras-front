@@ -25,7 +25,6 @@ export const AdminNuevoClubForm = () => {
     entrenamientos: [] as Entrenamiento[],
   });
 
-  // --- Cambios en club, localización y entrenamientos ---
   const handleChange = (field: keyof Club, value: any) => setClub({ ...club, [field]: value });
   const handleLocChange = (field: keyof Localizacion, value: any) => {
     setClub({ ...club, localizacion: { ...club.localizacion, [field]: value } });
@@ -50,13 +49,11 @@ export const AdminNuevoClubForm = () => {
     setClub({ ...club, entrenamientos });
   };
 
-  // --- Submit del formulario ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // --- Validaciones ---
       if (!club.nombre) {
         alert("El nombre del club es obligatorio");
         setLoading(false);
@@ -69,12 +66,8 @@ export const AdminNuevoClubForm = () => {
         return;
       }
 
-      // --- Guardar localización ---
-      console.log("Localización a enviar:", loc);
       const savedLoc = await saveLocalizacion(loc);
-      console.log("Localización guardada:", savedLoc);
 
-      // --- Guardar club ---
       const clubToSend = {
         nombre: club.nombre,
         descripcion: club.descripcion,
@@ -82,14 +75,11 @@ export const AdminNuevoClubForm = () => {
         web: club.web,
         localizacionId: savedLoc.localizacionId,
       };
-      console.log("Club limpio a enviar:", clubToSend);
       const savedClub = await saveClub(clubToSend);
-      console.log("Club guardado:", savedClub);
 
-      // --- Guardar entrenamientos ---
+
       if (club.entrenamientos?.length) {
         for (const ent of club.entrenamientos) {
-          // Convertir hora a formato HH:mm:ss para Spring Boot
           let horaStr = "";
           if (typeof ent.hora === "string") {
             horaStr = ent.hora.length === 5 ? `${ent.hora}:00` : ent.hora;
@@ -99,9 +89,7 @@ export const AdminNuevoClubForm = () => {
             clubId: savedClub.clubId!,
             hora: horaStr,
           };
-          console.log("Entrenamiento a enviar:", entrenamientoToSend);
           const savedEnt = await saveEntrenamiento(entrenamientoToSend);
-          console.log("Entrenamiento guardado:", savedEnt);
         }
       }
 
@@ -144,7 +132,7 @@ export const AdminNuevoClubForm = () => {
       >
         <h2 style={{ color: theme.palette.primary.main }}>Nuevo Club</h2>
 
-        {/* --- Datos Club --- */}
+        {/* Datos Club */}
         <TextInput
           label="Nombre"
           value={club.nombre}
@@ -161,7 +149,7 @@ export const AdminNuevoClubForm = () => {
         <TextInput label="Contacto" value={club.contacto} onChange={val => handleChange("contacto", val)} />
         <TextInput label="Web" value={club.web} onChange={val => handleChange("web", val)} />
 
-        {/* --- Localización --- */}
+        {/* Localización */}
         <h3 style={{ color: theme.palette.primary.main }}>Localización</h3>
         <TextInput
           label="Provincia"
@@ -198,7 +186,7 @@ export const AdminNuevoClubForm = () => {
           onChange={val => handleLocChange("longitud", parseFloat(val))}
         />
 
-        {/* --- Entrenamientos --- */}
+        {/* Entrenamientos */}
         <h3 style={{ color: theme.palette.primary.main }}>Entrenamientos</h3>
         {club.entrenamientos?.map((ent, idx) => (
           <Box key={idx} sx={{ mb: 2, p: 2, border: "1px solid #ccc", borderRadius: 1 }}>
@@ -241,7 +229,7 @@ export const AdminNuevoClubForm = () => {
           Agregar Entrenamiento
         </Button>
 
-        {/* --- Botones --- */}
+        {/* Botones */}
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}>
           <Button type="submit" variant="contained" color="primary" disabled={loading}>
             {loading ? "Guardando..." : "Guardar"}

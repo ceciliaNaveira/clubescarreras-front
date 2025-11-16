@@ -3,8 +3,6 @@ import ClubImage from '../assets/entrenamiento.png';
 import RaceImage from '../assets/carrera.jpg';
 
 export const HomePage = () => {
-  console.log({ ClubImage, RaceImage });
-
   return (
     <>
       <Section

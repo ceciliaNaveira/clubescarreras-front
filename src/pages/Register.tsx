@@ -33,7 +33,7 @@ export const Register = () => {
         nombre: form.nombre,
         email: form.email,
         contraseña: form.contraseña,
-        rolId: 3 // siempre rol de usuario
+        rolId: 3
       });
       alert("Usuario creado correctamente");
       navigate("/login");

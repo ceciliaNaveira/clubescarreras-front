@@ -10,6 +10,7 @@ type TextInputProps = {
 
 export const TextInput = ({ label, value, onChange, type = "text" }: TextInputProps) => {
   const theme = useTheme();
+
   return (
     <TextField
       fullWidth
@@ -17,9 +18,20 @@ export const TextInput = ({ label, value, onChange, type = "text" }: TextInputPr
       type={type}
       value={value}
       onChange={e => onChange(type === "number" ? parseFloat(e.target.value) : e.target.value)}
-      InputProps={{ sx: { color: theme.palette.primary.main, backgroundColor: "#fff", borderRadius: 2 } }}
-      InputLabelProps={{ sx: { color: theme.palette.primary.main } }}
-      sx={{ mb: 2 }}
+      InputLabelProps={{
+        shrink: type === "date" || type === "time" ? true : undefined, 
+      }}
+      sx={{
+        mb: 2,
+        "& .MuiInputBase-root": {
+          color: theme.palette.primary.main,
+          backgroundColor: "transparent",
+          borderRadius: 2,
+        },
+        "& .MuiInputLabel-root": {
+          color: theme.palette.primary.main,
+        },
+      }}
     />
   );
 };

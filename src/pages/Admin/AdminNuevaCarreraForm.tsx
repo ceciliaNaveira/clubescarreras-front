@@ -43,14 +43,12 @@ export const AdminNuevaCarreraForm = () => {
   };
 
   const handleSubmit = async () => {
-    // Validación obligatoria de club
     if (!carrera.clubId) {
       alert("Debes seleccionar un club");
       return;
     }
 
     try {
-      // Guardar localización primero
       const locCreada = await saveLocalizacion(localizacion);
 
       const carreraToSave: Partial<Carrera> = {

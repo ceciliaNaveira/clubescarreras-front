@@ -10,7 +10,7 @@ import { useUsuario } from "../../context/UsuarioContext";
 export const AdminNuevoComentarioForm = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { usuario } = useUsuario(); // Usuario logueado desde el contexto
+  const { usuario } = useUsuario();
 
   const [comentario, setComentario] = useState<Partial<ComentarioRequest>>({});
   const [clubs, setClubs] = useState<Club[]>([]);
@@ -47,13 +47,6 @@ export const AdminNuevoComentarioForm = () => {
     const texto = comentario.texto?.trim() || "";
     const valoracion = Number(comentario.valoracion);
 
-    console.log("Valores antes de la validación:", {
-      usuarioId,
-      clubId,
-      texto,
-      valoracion,
-    });
-
     if (!usuarioId || !clubId || !texto || isNaN(valoracion)) {
       alert("Rellene todos los campos obligatorios");
       return;
@@ -70,8 +63,6 @@ export const AdminNuevoComentarioForm = () => {
       texto,
       valoracion,
     };
-
-    console.log("Enviando comentario:", payload);
 
     try {
       await createComentario(payload);

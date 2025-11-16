@@ -3,32 +3,32 @@ import { createTheme } from '@mui/material/styles';
 export const theme = createTheme({
   palette: {
     primary: {
-      main: '#0E2B40',       // tu primer color
-      contrastText: '#ffffff', // texto sobre botones primarios
+      main: '#0E2B40',       
+      contrastText: '#ffffff', 
     },
     secondary: {
-      main: '#984916',       // segundo color
-      contrastText: '#ffffff', // texto sobre botones secundarios
+      main: '#984916',      
+      contrastText: '#ffffff', 
     },
     info: {
-      main: '#6B818C',       // tercer color
+      main: '#6B818C',
       contrastText: '#ffffff',
     },
     warning: {
-      main: '#404c70',       // cuarto color
+      main: '#404c70', 
       contrastText: '#ffffff',
     },
     success: {
-      main: '#0E2B40',       // quinto color
+      main: '#0E2B40',
       contrastText: '#ffffff',
     },
     background: {
-      default: '#e0e0e0',    // fondo general más claro para mejor contraste
-      paper: '#34495e',      // fondo de tarjetas y appbar más oscuro para resaltar texto
+      default: '#e0e0e0',
+      paper: '#34495e',
     },
     text: {
-      primary: '#ffffff',    // texto principal sobre fondos oscuros
-      secondary: '#0E2B40', // texto secundario sobre fondo paper
+      primary: '#ffffff',
+      secondary: '#0E2B40',
     },
   },
   typography: {

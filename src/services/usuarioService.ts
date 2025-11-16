@@ -53,10 +53,8 @@ export const deleteUsuario = async (idUsuario: number): Promise<void> => {
 // Guardar usuario (crear o actualizar)
 export const saveUsuario = async (usuario: Partial<UsuarioRequest> & { usuarioId?: number }): Promise<any> => {
   if (usuario.usuarioId) {
-    // Actualizar
     return updateUsuario(usuario.usuarioId, usuario as UsuarioRequest);
   } else {
-    // Crear
     return createUsuario(usuario as UsuarioRequest);
   }
 };
@@ -73,7 +71,7 @@ export const loginUsuario = async (email: string, contraseña: string): Promise<
     throw new Error("Email o contraseña incorrectos");
   }
 
-  return res.json(); // aquí recibes los datos del usuario logueado
+  return res.json(); 
 };
 
 // filtros opcionales: nombre, email, rolId

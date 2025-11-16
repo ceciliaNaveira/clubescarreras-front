@@ -2,7 +2,7 @@ export type ComentarioRequest = {
   usuarioId: number;
   clubId: number;
   texto: string;
-  valoracion: number; // 1 a 5
+  valoracion: number;
 };
 
 const BASE_URL = "http://localhost:8080";

@@ -25,7 +25,6 @@ export const Clubs = () => {
 
       const clubsWithDetails = await Promise.all(
         allClubs.map(async c => {
-          // Cargar solo entrenamientos de este club usando clubId
           const entrenamientos: Entrenamiento[] = await getEntrenamientosByClubId(c.clubId);
           const loc: Localizacion = await getLocalizacionById(c.localizacionId);
           return { ...c, entrenamientos, localizacion: loc };
@@ -48,7 +47,6 @@ export const Clubs = () => {
   if (loading) return <p>Cargando clubes...</p>;
   if (!clubs.length) return <p>No hay clubes disponibles</p>;
 
-  // Filtrado combinado por búsqueda y día de entrenamiento
   const filteredClubs = clubs.filter(c => {
     const matchName = c.nombre?.toLowerCase().includes(search.toLowerCase()) ?? false;
     const matchDia =
@@ -87,13 +85,13 @@ export const Clubs = () => {
         title=""
         description=""
         items={filteredClubs.map(c => ({
-          id: c.clubId.toString(),           // <- CORREGIDO
+          id: c.clubId.toString(),
           label: c.nombre ?? "Sin nombre",
           lat: c.localizacion?.latitud ?? 0,
           lng: c.localizacion?.longitud ?? 0,
           description: c.descripcion ?? "",
         }))}
-        getDetailLink={club => `/clubs/${club.id}`} // club.id aquí es el clubId string
+        getDetailLink={club => `/clubs/${club.id}`}
         search={search}
       />
     </div>

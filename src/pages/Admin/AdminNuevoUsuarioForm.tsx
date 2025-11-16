@@ -18,7 +18,6 @@ export const AdminNuevoUsuarioForm = () => {
   const [roles, setRoles] = useState<Rol[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Cargar roles
   useEffect(() => {
     const fetchRoles = async () => {
       try {

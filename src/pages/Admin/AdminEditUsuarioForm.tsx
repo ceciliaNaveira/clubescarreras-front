@@ -1,13 +1,25 @@
 // src/pages/admin/AdminEditUsuarioForm.tsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography, List, ListItem, ListItemText } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { TextInput } from "../../components/TextInput";
 import { SelectInput } from "../../components/SelectInput";
 
-import { type Usuario, getUsuarioById, saveUsuario } from "../../services/usuarioService";
+import { type Usuario, getUsuarioById, saveUsuario, deleteUsuario } from "../../services/usuarioService";
 import { type Rol, getRoles } from "../../services/rolService";
+import {
+  buscarComentarios,
+  deleteComentario
+} from "../../services/comentarioService";
+import {
+  getFavoritosClubByUsuario,
+  deleteFavoritoClub
+} from "../../services/favoritoClubService";
+import {
+  getFavoritosCarreraByUsuario,
+  deleteFavoritoCarrera
+} from "../../services/favoritoCarreraService";
 
 export const AdminEditUsuarioForm = () => {
   const theme = useTheme();
@@ -18,6 +30,10 @@ export const AdminEditUsuarioForm = () => {
   const [roles, setRoles] = useState<Rol[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [comentarios, setComentarios] = useState<any[]>([]);
+  const [favoritosClub, setFavoritosClub] = useState<any[]>([]);
+  const [favoritosCarrera, setFavoritosCarrera] = useState<any[]>([]);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -25,6 +41,15 @@ export const AdminEditUsuarioForm = () => {
         if (idUsuario) {
           const u = await getUsuarioById(Number(idUsuario));
           setUsuario(u);
+
+          const [coms, favClubs, favCarrs] = await Promise.all([
+            buscarComentarios({ usuarioId: Number(idUsuario) }),
+            getFavoritosClubByUsuario(Number(idUsuario)),
+            getFavoritosCarreraByUsuario(Number(idUsuario))
+          ]);
+          setComentarios(coms);
+          setFavoritosClub(favClubs);
+          setFavoritosCarrera(favCarrs);
         }
         const allRoles = await getRoles();
         setRoles(allRoles);
@@ -60,6 +85,62 @@ export const AdminEditUsuarioForm = () => {
     }
   };
 
+  const handleDeleteAsociados = async () => {
+    if (!idUsuario) return;
+    if (!confirm("¿Seguro que quieres eliminar todos los comentarios y favoritos del usuario?")) return;
+
+    try {
+      setLoading(true);
+
+
+      for (const c of comentarios) {
+        const id = c.id_comentario ?? c.id;
+        if (id) await deleteComentario(id);
+      }
+
+      for (const f of favoritosClub) {
+        if (f.clubId) await deleteFavoritoClub(Number(idUsuario), f.clubId);
+      }
+
+
+      for (const f of favoritosCarrera) {
+        const carreraId = f.carrera?.carreraId;
+        if (carreraId) await deleteFavoritoCarrera(Number(idUsuario), carreraId);
+      }
+
+      setComentarios([]);
+      setFavoritosClub([]);
+      setFavoritosCarrera([]);
+
+      alert("Datos asociados eliminados correctamente");
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar datos asociados");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleDeleteUsuario = async () => {
+    if (!idUsuario) return;
+    if (comentarios.length || favoritosClub.length || favoritosCarrera.length) {
+      alert("No se puede eliminar el usuario mientras tenga datos asociados.\nPrimero elimina comentarios y favoritos.");
+      return;
+    }
+    if (!confirm("¿Seguro que quieres eliminar este usuario?")) return;
+
+    try {
+      setLoading(true);
+      await deleteUsuario(Number(idUsuario));
+      alert("Usuario eliminado correctamente");
+      navigate("/admin/usuarios");
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar usuario");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) return <p>Cargando usuario...</p>;
 
   return (
@@ -74,7 +155,7 @@ export const AdminEditUsuarioForm = () => {
         </Button>
       </Box>
 
-      {/* --- Usuario --- */}
+      {/* Usuario */}
       <Box sx={{ mb: 3, p: 2, backgroundColor: "#fff", borderRadius: 2, boxShadow: "0 2px 6px rgba(0,0,0,0.1)" }}>
         <h3 style={{ color: theme.palette.primary.main }}>Usuario</h3>
 
@@ -105,8 +186,76 @@ export const AdminEditUsuarioForm = () => {
         />
       </Box>
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+      {/* Datos asociados */}
+      <Box sx={{ mb: 3, p: 2, color:"text.secondary", backgroundColor: "#fff", borderRadius: 2, boxShadow: "0 2px 6px rgba(0,0,0,0.1)" }}>
+        <h3 style={{ color: theme.palette.primary.main }}>Datos asociados</h3>
+
+        {comentarios.length === 0 && favoritosClub.length === 0 && favoritosCarrera.length === 0 ? (
+          <Typography>No hay comentarios ni favoritos asociados.</Typography>
+        ) : (
+          <>
+            {/* Comentarios */}
+            {comentarios.length > 0 && (
+              <Box mb={2}>
+                <Typography variant="subtitle1">Comentarios ({comentarios.length})</Typography>
+                <List dense>
+                  {comentarios.map(c => (
+                    <ListItem key={`coment-${c.id_comentario ?? c.id}`}>
+                      <ListItemText
+                        primary=""
+                        secondary={`Comentario: ${c.texto} | Club ID: ${c.clubId}`}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            )}
+
+            {/* Favoritos Club */}
+            {favoritosClub.length > 0 && (
+              <Box mb={2}>
+                <Typography variant="subtitle1">Favoritos de Club ({favoritosClub.length})</Typography>
+                <List dense>
+                  {favoritosClub.map(f => (
+                    <ListItem key={`club-${f.usuarioId}-${f.clubId}`}>
+                      <ListItemText
+                        primary=""
+                        secondary={`Club: ${f.clubNombre || `ID ${f.clubId}`} | Usuario ID: ${f.usuarioId}`}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            )}
+
+            {/* Favoritos Carrera */}
+            {favoritosCarrera.length > 0 && (
+              <Box mb={2}>
+                <Typography variant="subtitle1">Favoritos de Carrera ({favoritosCarrera.length})</Typography>
+                <List dense>
+                  {favoritosCarrera.map(f => (
+                    <ListItem key={`carrera-${f.usuarioId}-${f.carrera?.carreraId}`}>
+                      <ListItemText
+                        primary=""
+                        secondary={`Carrera: ${f.carrera?.nombre || `ID ${f.carrera?.carreraId}`} | Usuario ID: ${f.usuarioId}`}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            )}
+
+            <Button variant="contained" color="secondary" onClick={handleDeleteAsociados}>
+              Eliminar todos los datos asociados
+            </Button>
+          </>
+        )}
+      </Box>
+
+      {/* Botones */}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mb: 2 }}>
         <Button variant="contained" color="primary" onClick={handleSave}>Guardar</Button>
+        <Button variant="contained" color="error" onClick={handleDeleteUsuario}>Eliminar usuario</Button>
       </Box>
     </Box>
   );

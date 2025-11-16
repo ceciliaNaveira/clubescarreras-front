@@ -4,7 +4,7 @@ import { FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material";
 interface FiltroDiaSemanaProps {
   diaSemanaFiltro: string;
   setDiaSemanaFiltro: (value: string) => void;
-  handleFiltro: () => void; // no necesario, pero lo dejamos para compatibilidad
+  handleFiltro: () => void; 
   diasSemana: string[];
 }
 
@@ -21,11 +21,11 @@ const FiltroDiaSemana: React.FC<FiltroDiaSemanaProps> = ({
           labelId="dia-semana-label"
           value={diaSemanaFiltro}
           onChange={(e) => setDiaSemanaFiltro(e.target.value)}
-          label="Filtrar día"
+          label="Filtrar por día de entrenamiento"
           fullWidth
           sx={{
-            color: 'text.secondary', // texto del valor seleccionado
-            '& .MuiSelect-select': { color: 'text.secondary' }, // asegura que el texto seleccionado sea secondary
+            color: 'text.secondary', 
+            '& .MuiSelect-select': { color: 'text.secondary' },
           }}
           inputProps={{ 'aria-label': 'Filtrar por día de entrenamiento' }}
         >

@@ -23,7 +23,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import { LinkButton } from "./LinkButton";
 import { HeaderLogo } from "./HeaderLogo";
-import { useUsuario } from "../context/UsuarioContext";
+import { useUsuario } from "../context/usuarioContext";
 
 export const Header = () => {
   const navigate = useNavigate();

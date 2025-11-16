@@ -34,16 +34,13 @@ export const AdminEditClubForm = () => {
       if (!idClub) return;
       setLoading(true);
       try {
-        // --- Cargar club ---
         const data = await getClubById(Number(idClub));
         setClub(data);
 
-        // --- Cargar localización ---
         const loc = await getLocalizacionById(data.localizacionId);
         setLocalizacion(loc);
 
-        // --- Cargar solo entrenamientos del club ---
-        const entrenamientosData = await getEntrenamientosByClubId(data.clubId); // ⚡ clubId según la BBDD
+        const entrenamientosData = await getEntrenamientosByClubId(data.clubId);
         setEntrenamientos(entrenamientosData);
         setOriginalEntrenamientos(entrenamientosData);
       } catch (err) {
@@ -88,16 +85,13 @@ export const AdminEditClubForm = () => {
     try {
       setLoading(true);
 
-      // --- Guardar localización ---
       const savedLoc = await saveLocalizacion(localizacion);
       setLocalizacion(savedLoc);
 
-      // --- Guardar club ---
       const payloadClub = { ...club, localizacionId: savedLoc.localizacionId };
       const savedClub = await saveClub(payloadClub);
       setClub(savedClub);
 
-      // --- Eliminar entrenamientos borrados ---
       const currentIds = entrenamientos.map(e => e.entrenamientoId).filter(Boolean);
       for (const ent of originalEntrenamientos) {
         if (ent.entrenamientoId && !currentIds.includes(ent.entrenamientoId)) {
@@ -105,7 +99,6 @@ export const AdminEditClubForm = () => {
         }
       }
 
-      // --- Guardar entrenamientos ---
       for (const ent of entrenamientos) {
         const horaFormateada = ent.hora?.length === 5 ? `${ent.hora}:00` : ent.hora;
         const payloadEnt: Partial<Entrenamiento> = {
@@ -115,8 +108,6 @@ export const AdminEditClubForm = () => {
         };
         await saveEntrenamiento(payloadEnt);
       }
-
-      // --- Recargar entrenamientos filtrados ---
       const entrenamientosActualizados = await getEntrenamientosByClubId(savedClub.clubId!);
       setEntrenamientos(entrenamientosActualizados);
       setOriginalEntrenamientos(entrenamientosActualizados);
@@ -148,7 +139,7 @@ export const AdminEditClubForm = () => {
         </Button>
       </Box>
 
-      {/* --- Club --- */}
+      {/* Club */}
       <Box sx={{ mb: 3, p: 2, backgroundColor: "#fff", borderRadius: 2, boxShadow: "0 2px 6px rgba(0,0,0,0.1)" }}>
         <h3 style={{ color: theme.palette.primary.main }}>Club</h3>
         {["nombre", "descripcion", "contacto", "web"].map((field, idx) => (
@@ -163,7 +154,7 @@ export const AdminEditClubForm = () => {
         ))}
       </Box>
 
-      {/* --- Localización --- */}
+      {/* Localización */}
       <Box sx={{ mb: 3, p: 2, backgroundColor: "#fff", borderRadius: 2, boxShadow: "0 2px 6px rgba(0,0,0,0.1)" }}>
         <h3 style={{ color: theme.palette.primary.main }}>Localización</h3>
         {["provincia", "municipio", "codigoPostal", "direccion"].map((field, idx) => (
@@ -185,7 +176,7 @@ export const AdminEditClubForm = () => {
         ))}
       </Box>
 
-      {/* --- Entrenamientos --- */}
+      {/* Entrenamientos */}
       <Box sx={{ mb: 3, p: 2, backgroundColor: "#fff", borderRadius: 2, boxShadow: "0 2px 6px rgba(0,0,0,0.1)" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
           <h3 style={{ color: theme.palette.primary.main }}>Entrenamientos</h3>
@@ -228,7 +219,19 @@ export const AdminEditClubForm = () => {
               onChange={val => handleEntrenamientoChange(idx, "descripcion", val)}
             />
 
-            <Button color="error" variant="contained" onClick={() => removeEntrenamiento(idx)}>Eliminar</Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => removeEntrenamiento(idx)}
+              sx={{
+                height: 40,
+                minWidth: 100,
+                paddingInline: 2,
+                textTransform: "none"
+              }}
+            >
+              Eliminar
+            </Button>
           </Box>
         ))}
       </Box>

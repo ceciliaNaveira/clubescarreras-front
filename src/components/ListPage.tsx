@@ -27,12 +27,10 @@ export const ListPage = ({ items = [], getDetailLink, search = "" }: ListPagePro
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [page, setPage] = useState(1);
 
-  // Filtrado por search
   const filteredItems = items.filter(item =>
     item.label.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Calcular items de la página actual
   const startIndex = (page - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const pagedItems = filteredItems.slice(startIndex, endIndex);

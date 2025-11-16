@@ -14,21 +14,21 @@ export type Club = {
 
 const BASE_URL = "http://localhost:8080";
 
-/** Listar todos los clubes */
+//Listar todos los clubes
 export const getClubs = async (): Promise<Club[]> => {
   const response = await fetch(`${BASE_URL}/clubes`);
   if (!response.ok) throw new Error("Error al cargar clubes");
   return await response.json();
 };
 
-/** Obtener un club por ID */
+//Obtener un club por ID 
 export const getClubById = async (id: number): Promise<Club> => {
   const response = await fetch(`${BASE_URL}/clubes/${id}`);
   if (!response.ok) throw new Error("Error al cargar club");
   return await response.json();
 };
 
-/** Crear o actualizar club (con localización incluida si la hay) */
+//Crear o actualizar club (con localización incluida si la hay) 
 export const saveClub = async (club: Partial<Club>): Promise<Club> => {
   let idLocalizacion = club.idLocalizacion;
 
@@ -52,7 +52,7 @@ export const saveClub = async (club: Partial<Club>): Promise<Club> => {
   return await res.json();
 };
 
-/** Eliminar un club por ID */
+// Eliminar un club por ID
 export const deleteClub = async (id: number): Promise<void> => {
   const response = await fetch(`${BASE_URL}/clubes/${id}`, {
     method: "DELETE",

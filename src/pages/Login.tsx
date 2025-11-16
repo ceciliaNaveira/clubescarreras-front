@@ -19,11 +19,10 @@ export const Login = () => {
       setError("");
       const usuario = await loginUsuario(email, contraseña);
 
-      // Guardar en localStorage y contexto
       localStorage.setItem("usuario", JSON.stringify(usuario));
       setUsuario(usuario);
 
-      navigate("/"); // redirigir a home
+      navigate("/");
     } catch (err: any) {
       setError(err.message || "Error al iniciar sesión");
     }

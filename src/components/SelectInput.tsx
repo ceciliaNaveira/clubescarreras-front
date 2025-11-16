@@ -34,13 +34,14 @@ export const SelectInput = ({
       {/* Select accesible */}
       <Select
         labelId={`${id}-label`}
+        label={label}  
         id={id}
         value={value}
         onChange={e => onChange(e.target.value)}
         aria-required={required}
         aria-describedby={`${id}-helper-text`}
         sx={{
-          color: theme.palette.text.primary,
+          color: theme.palette.text.secondary,
           backgroundColor: "#fff",
           borderRadius: 2,
         }}

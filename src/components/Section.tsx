@@ -37,7 +37,7 @@ export const Section = ({
       <Box
         component="img"
         src={image}
-        alt="" // Evita redundancia con el título visible
+        alt="" 
         sx={{
           width: isMobile ? "100%" : "40%",
           maxHeight: isMobile ? 300 : "none",
@@ -51,7 +51,7 @@ export const Section = ({
       <Box sx={{ flex: 1 }}>
         <Typography
           variant={isMobile ? "h4" : "h2"}
-          component="h2" // asegura jerarquía semántica correcta
+          component="h2"
           sx={{ mb: 2, fontWeight: 600 }}
         >
           {title}
@@ -61,7 +61,7 @@ export const Section = ({
           variant="body1"
           sx={{
             mb: 3,
-            fontSize: "1rem", // tamaño mínimo accesible
+            fontSize: "1rem", 
             lineHeight: 1.6,
           }}
         >

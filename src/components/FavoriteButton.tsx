@@ -57,7 +57,6 @@ export const FavoriteButton = ({ tipo, id }: FavoriteButtonProps) => {
         nuevoEstado = await toggleFavoritoCarrera(usuario.usuarioId, id);
       }
 
-      // Si hubo error al agregar (409), mantenemos rojo si ya existía
       setIsFavorito(nuevoEstado ?? true);
     } catch (err) {
       console.error("Error al cambiar favorito:", err);
@@ -70,7 +69,7 @@ export const FavoriteButton = ({ tipo, id }: FavoriteButtonProps) => {
       onClick={handleToggle}
       sx={{ color: isFavorito ? "red" : "gray" }}
       aria-label="Favorito"
-      disabled={cargando} // Evita clicks mientras carga
+      disabled={cargando}
     >
       {isFavorito ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
     </IconButton>

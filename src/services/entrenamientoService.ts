@@ -9,21 +9,21 @@ export type Entrenamiento = {
 
 const BASE_URL = "http://localhost:8080";
 
-/** Listar todos los entrenamientos */
+// Listar todos los entrenamientos 
 export const getEntrenamientos = async (): Promise<Entrenamiento[]> => {
   const res = await fetch(`${BASE_URL}/entrenamientos`);
   if (!res.ok) throw new Error("Error al cargar entrenamientos");
   return await res.json();
 };
 
-/** Obtener entrenamiento por ID */
+// Obtener entrenamiento por ID 
 export const getEntrenamientoById = async (id: number): Promise<Entrenamiento> => {
   const res = await fetch(`${BASE_URL}/entrenamientos/${id}`);
   if (!res.ok) throw new Error("Error al cargar entrenamiento");
   return await res.json();
 };
 
-/** Buscar entrenamientos filtrando opcionalmente por club o día */
+// Buscar entrenamientos filtrando opcionalmente por club o día
 export const buscarEntrenamientos = async (
   clubId?: number,
   diaSemana?: string
@@ -40,7 +40,7 @@ export const buscarEntrenamientos = async (
   return await res.json();
 };
 
-/** Crear o actualizar entrenamiento */
+// Crear o actualizar entrenamiento 
 export const saveEntrenamiento = async (ent: Partial<Entrenamiento>): Promise<Entrenamiento> => {
   const url = ent.entrenamientoId
     ? `${BASE_URL}/entrenamientos/${ent.entrenamientoId}`
@@ -57,7 +57,7 @@ export const saveEntrenamiento = async (ent: Partial<Entrenamiento>): Promise<En
   return await res.json();
 };
 
-/** Eliminar entrenamiento */
+// Eliminar entrenamiento 
 export const deleteEntrenamiento = async (id: number): Promise<void> => {
   const res = await fetch(`${BASE_URL}/entrenamientos/${id}`, {
     method: "DELETE",
@@ -65,7 +65,7 @@ export const deleteEntrenamiento = async (id: number): Promise<void> => {
   if (!res.ok) throw new Error("Error al eliminar entrenamiento");
 };
 
-/** Obtener entrenamientos de un club por su ID */
+// Obtener entrenamientos de un club por su ID 
 export const getEntrenamientosByClubId = async (clubId: number): Promise<Entrenamiento[]> => {
   return buscarEntrenamientos(clubId);
 };

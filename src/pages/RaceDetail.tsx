@@ -23,13 +23,10 @@ export const RaceDetail = () => {
       if (!id) return;
       setLoading(true);
       try {
-        // Obtener datos de la carrera
         const c: Carrera = await getCarreraById(Number(id));
 
-        // Obtener la localización asociada
         const loc: Localizacion = await getLocalizacionById(c.localizacionId);
 
-        // Guardar todo junto en el estado
         setCarrera({ ...c, localizacion: loc });
       } catch (err) {
         console.error("Error al cargar detalles de la carrera:", err);
@@ -67,7 +64,7 @@ export const RaceDetail = () => {
                   href={carrera.webOficial} 
                   target="_blank" 
                   rel="noreferrer"
-                  style={{ color: "#fff", textDecoration: "underline" }} // texto blanco
+                  style={{ color: "#fff", textDecoration: "underline" }}
                 >
                   {carrera.webOficial}
                 </a>

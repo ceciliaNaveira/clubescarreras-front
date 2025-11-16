@@ -1,24 +1,26 @@
-import { Box, useTheme } from "@mui/material";
+import { Box, useTheme, TextField } from "@mui/material";
+import { useState, useMemo } from "react";
 
-interface Column {
-  key: string;
+interface Column<T = any> {
+  key: keyof T | string;
   label: string;
-  render?: (item: any) => React.ReactNode; // Permite renderizado personalizado
+  render?: (item: T) => React.ReactNode; 
 }
 
-interface AdminTableProps {
-  columns: Column[];
-  data: any[];
+interface AdminTableProps<T = any> {
+  columns: Column<T>[];
+  data: T[];
   loading: boolean;
   loadingMessage?: string;
   emptyMessage?: string;
-  onEdit?: (item: any) => void;
-  onDelete?: (item: any) => void;
+  onEdit?: (item: T) => void;
+  onDelete?: (item: T) => void;
   onCreate?: () => void;
   createLabel?: string;
+  searchKeys?: (keyof T | string)[];
 }
 
-export const AdminTable: React.FC<AdminTableProps> = ({
+export const AdminTable = <T extends any>({
   columns,
   data,
   loading,
@@ -28,16 +30,48 @@ export const AdminTable: React.FC<AdminTableProps> = ({
   onDelete,
   onCreate,
   createLabel = "Crear nuevo",
-}) => {
+  searchKeys,
+}: AdminTableProps<T>) => {
   const theme = useTheme();
+  const [search, setSearch] = useState("");
 
-  if (loading) return <p>{loadingMessage}</p>;
-  if (!data.length) return <p>{emptyMessage}</p>;
+  // Filtrado para búsqueda
+  const filteredData = useMemo(() => {
+    if (!search) return data;
+    const keysToSearch = searchKeys && searchKeys.length > 0 ? searchKeys : [columns[0].key];
+
+    return data.filter((item) =>
+      keysToSearch.some((key) => {
+        const value = (item as any)[key];
+        return value !== undefined && value !== null && value.toString().toLowerCase().includes(search.toLowerCase());
+      })
+    );
+  }, [data, search, columns, searchKeys]);
+
+  if (loading)
+    return (
+      <p style={{ textAlign: "center", marginTop: "16px" }}>
+        {loadingMessage}
+      </p>
+    );
 
   return (
     <Box sx={{ px: 4, mt: 2, mb: 2 }}>
-      {onCreate && (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+      {/* Barra de búsqueda y botón crear */}
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+        <TextField
+          label="Buscar"
+          variant="outlined"
+          size="small"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              "& .MuiInputBase-input": { color: theme.palette.text.secondary },
+            },
+          }}
+        />
+        {onCreate && (
           <button
             style={{
               padding: "8px 16px",
@@ -51,8 +85,8 @@ export const AdminTable: React.FC<AdminTableProps> = ({
           >
             {createLabel}
           </button>
-        </Box>
-      )}
+        )}
+      </Box>
 
       <Box
         component="table"
@@ -66,79 +100,78 @@ export const AdminTable: React.FC<AdminTableProps> = ({
           overflow: "hidden",
         }}
       >
-        <Box
-          component="thead"
-          sx={{
-            backgroundColor: theme.palette.primary.light,
-            color: theme.palette.common.white,
-          }}
-        >
+        {/* Cabecera */}
+        <Box component="thead" sx={{ backgroundColor: theme.palette.primary.light, color: theme.palette.common.white }}>
           <Box component="tr">
             {columns.map((col) => (
-              <Box component="th" key={col.key} sx={{ p: 2, textAlign: "left" }}>
+              <Box component="th" key={col.key.toString()} sx={{ p: 2, textAlign: "left" }}>
                 {col.label}
               </Box>
             ))}
-            {(onEdit || onDelete) && (
-              <Box component="th" sx={{ p: 2, textAlign: "left" }}>
-                Acciones
-              </Box>
-            )}
+            {(onEdit || onDelete) && <Box component="th" sx={{ p: 2, textAlign: "left" }}>Acciones</Box>}
           </Box>
         </Box>
 
+        {/* Cuerpo */}
         <Box component="tbody">
-          {data.map((item, rowIndex) => {
-            // Usar un key único por fila: id si existe, sino fallback al índice
-            const rowKey = item.id ?? item.usuarioId ?? item.clubId ?? item.comentarioId ?? rowIndex;
-            return (
-              <Box component="tr" key={rowKey} sx={{ borderBottom: "1px solid #ccc" }}>
-                {columns.map((col, colIndex) => (
-                  <Box
-                    component="td"
-                    sx={{ p: 2 }}
-                    key={col.key + "-" + colIndex} // clave única por columna
-                  >
-                    {col.render ? col.render(item) : item[col.key]}
-                  </Box>
-                ))}
-                {(onEdit || onDelete) && (
-                  <Box component="td" sx={{ p: 2, display: "flex", gap: 1 }}>
-                    {onEdit && (
-                      <button
-                        style={{
-                          padding: "4px 8px",
-                          backgroundColor: theme.palette.success.main,
-                          color: "#fff",
-                          border: "none",
-                          borderRadius: 4,
-                          cursor: "pointer",
-                        }}
-                        onClick={() => onEdit(item)}
-                      >
-                        Editar
-                      </button>
-                    )}
-                    {onDelete && (
-                      <button
-                        style={{
-                          padding: "4px 8px",
-                          backgroundColor: theme.palette.error.main,
-                          color: "#fff",
-                          border: "none",
-                          borderRadius: 4,
-                          cursor: "pointer",
-                        }}
-                        onClick={() => onDelete(item)}
-                      >
-                        Eliminar
-                      </button>
-                    )}
-                  </Box>
-                )}
+          {filteredData.length > 0 ? (
+            filteredData.map((item, rowIndex) => {
+              const rowKey = `${(item as any).id ?? (item as any).usuarioId ?? (item as any).clubId ?? (item as any).comentarioId ?? (item as any).carreraId ?? 'row'}-${rowIndex}`;
+              return (
+                <Box component="tr" key={rowKey} sx={{ borderBottom: "1px solid #ccc" }}>
+                  {columns.map((col) => (
+                    <Box component="td" sx={{ p: 2 }} key={col.key.toString()}>
+                      {col.render ? col.render(item) : (item as any)[col.key]}
+                    </Box>
+                  ))}
+                  {(onEdit || onDelete) && (
+                    <Box component="td" sx={{ p: 2, display: "flex", gap: 1 }}>
+                      {onEdit && (
+                        <button
+                          style={{
+                            padding: "4px 8px",
+                            backgroundColor: theme.palette.success.main,
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: 4,
+                            cursor: "pointer",
+                          }}
+                          onClick={() => onEdit(item)}
+                        >
+                          Editar
+                        </button>
+                      )}
+                      {onDelete && (
+                        <button
+                          style={{
+                            padding: "4px 8px",
+                            backgroundColor: theme.palette.error.main,
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: 4,
+                            cursor: "pointer",
+                          }}
+                          onClick={() => onDelete(item)}
+                        >
+                          Eliminar
+                        </button>
+                      )}
+                    </Box>
+                  )}
+                </Box>
+              );
+            })
+          ) : (
+            <Box component="tr">
+              <Box
+                component="td"
+                colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
+                sx={{ p: 2, textAlign: "center" }}
+              >
+                {emptyMessage}
               </Box>
-            );
-          })}
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

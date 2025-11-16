@@ -46,7 +46,6 @@ export const Races = () => {
   if (loading) return <p>Cargando carreras...</p>;
   if (!carreras.length) return <p>No hay carreras disponibles</p>;
 
-  // --- Filtros combinados ---
   let filteredCarreras = carreras.filter((c) => {
     const matchName = c.nombre?.toLowerCase().includes(search.toLowerCase()) ?? false;
     const matchDistancia =
@@ -54,7 +53,6 @@ export const Races = () => {
     return matchName && matchDistancia;
   });
 
-  // --- Ordenar por fecha ---
   filteredCarreras = filteredCarreras.sort((a, b) => {
     const fechaA = new Date(a.fecha).getTime();
     const fechaB = new Date(b.fecha).getTime();
@@ -63,7 +61,7 @@ export const Races = () => {
 
   return (
     <div>
-      {/* --- Título y descripción --- */}
+      {/* Título y descripción */}
       <Box sx={{ px: 2, mt: 2, mb: 2 }}>
         <TitleDescription
           title="Carreras en Galicia"
@@ -71,7 +69,7 @@ export const Races = () => {
         />
       </Box>
 
-      {/* --- Buscador + filtros --- */}
+      {/* Buscador + filtros */}
       <Box sx={{ px: 4, display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}>
         {/* Buscador por nombre */}
         <Box sx={{ flex: 1, minWidth: 200 }}>
@@ -101,7 +99,7 @@ export const Races = () => {
             SelectProps={{ native: true }}
             fullWidth
             size="small"
-            InputProps={{ sx: { height: 40, py: 0.8 } }} // Ajusta la altura para igualar
+            InputProps={{ sx: { height: 40, py: 0.8 } }}
           >
             <option value="asc">Más próximas</option>
             <option value="desc">Más lejanas</option>
@@ -109,7 +107,7 @@ export const Races = () => {
         </Box>
       </Box>
 
-      {/* --- Lista y mapa --- */}
+      {/* Lista y mapa */}
       <ListPage
         title=""
         description=""

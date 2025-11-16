@@ -5,7 +5,7 @@ export const Footer = () => {
     <Box
       component="footer"
       sx={{
-        py: 0.5, // padding vertical
+        py: 0.5, 
         textAlign: "center",
         backgroundColor: "primary.main",
         borderTop: 1,

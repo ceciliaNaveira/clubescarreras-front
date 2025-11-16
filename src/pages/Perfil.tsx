@@ -104,7 +104,9 @@ export const Perfil = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        mt: 4,  
+        mb: 4,   
+        px: 2, 
         backgroundColor: "background.default",
       }}
     >

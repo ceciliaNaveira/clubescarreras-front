@@ -149,7 +149,7 @@ export const ClubComments = ({ clubId }: ClubCommentsProps) => {
             multiline
             rows={3}
             fullWidth
-            sx={{ mb: 1, input: { color: "text.primary" }, label: { color: "text.primary" } }}
+            sx={{ mt:2, mb: 1, input: { color: "text.primary" }, label: { color: "text.primary" } }}
             inputProps={{ "aria-required": true }}
           />
 
@@ -162,6 +162,7 @@ export const ClubComments = ({ clubId }: ClubCommentsProps) => {
             fullWidth
             size="small"
             sx={{ 
+              mt:2,
               mb: 1, 
               input: { color: "text.primary" }, 
               label: { color: "text.primary" } 

@@ -58,10 +58,10 @@ export const Favoritos = () => {
 
   return (
     <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>Mis Favoritos</Typography>
+      <Typography variant="h4" gutterBottom color="text.secondary">Mis Favoritos</Typography>
 
       {/* --- CLUBES FAVORITOS --- */}
-      <Typography variant="h5" sx={{ mt: 3, mb: 2 }}>Clubes favoritos</Typography>
+      <Typography variant="h5" sx={{ mt: 3, mb: 2 }} color="text.secondary">Clubes favoritos</Typography>
       {favoritosClubes.length === 0 ? (
         <Typography variant="body1" color="text.secondary">No tienes clubes favoritos aún.</Typography>
       ) : (
@@ -101,7 +101,7 @@ export const Favoritos = () => {
       )}
 
       {/* --- CARRERAS FAVORITAS --- */}
-      <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>Carreras favoritas</Typography>
+      <Typography variant="h5" sx={{ mt: 5, mb: 2 }} color="text.secondary">Carreras favoritas</Typography>
       {favoritosCarreras.length === 0 ? (
         <Typography variant="body1" color="text.secondary">No tienes carreras favoritas aún.</Typography>
       ) : (

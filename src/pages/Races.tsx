@@ -99,7 +99,7 @@ export const Races = () => {
             SelectProps={{ native: true }}
             fullWidth
             size="small"
-            InputProps={{ sx: { height: 40, py: 0.8 } }}
+            InputProps={{ sx: { height: 40, py: 0.8 , color:"#0E2B40"} }}
           >
             <option value="asc">Más próximas</option>
             <option value="desc">Más lejanas</option>

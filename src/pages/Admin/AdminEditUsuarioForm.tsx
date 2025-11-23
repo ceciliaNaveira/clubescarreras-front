@@ -91,21 +91,20 @@ export const AdminEditUsuarioForm = () => {
 
     try {
       setLoading(true);
-
-
       for (const c of comentarios) {
-        const id = c.id_comentario ?? c.id;
+        const id = c.comentarioId; 
         if (id) await deleteComentario(id);
       }
 
       for (const f of favoritosClub) {
-        if (f.clubId) await deleteFavoritoClub(Number(idUsuario), f.clubId);
+        const usuarioId = f.usuarioId;
+        const clubId = f.clubId;
+        if (usuarioId && clubId) await deleteFavoritoClub(usuarioId, clubId);
       }
-
-
       for (const f of favoritosCarrera) {
-        const carreraId = f.carrera?.carreraId;
-        if (carreraId) await deleteFavoritoCarrera(Number(idUsuario), carreraId);
+        const usuarioId = f.usuarioId;
+        const carreraId = f.carrera?.carreraId; 
+        if (usuarioId && carreraId) await deleteFavoritoCarrera(usuarioId, carreraId);
       }
 
       setComentarios([]);
@@ -120,6 +119,7 @@ export const AdminEditUsuarioForm = () => {
       setLoading(false);
     }
   };
+
   const handleDeleteUsuario = async () => {
     if (!idUsuario) return;
     if (comentarios.length || favoritosClub.length || favoritosCarrera.length) {

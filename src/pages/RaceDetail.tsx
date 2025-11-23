@@ -54,7 +54,9 @@ export const RaceDetail = () => {
         <Card sx={{ flex: 1, minWidth: 250 }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>Detalles de la carrera</Typography>
-            <Typography>Fecha: {carrera.fecha}</Typography>
+            <Typography>
+              Fecha: {new Date(carrera.fecha).toLocaleDateString("es-ES")}
+            </Typography>
             {carrera.distanciaKm && <Typography>Distancia: {carrera.distanciaKm} km</Typography>}
             {carrera.clubNombre && <Typography>Organiza: {carrera.clubNombre}</Typography>}
             {carrera.webOficial && (

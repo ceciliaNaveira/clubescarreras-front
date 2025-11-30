@@ -1,10 +1,9 @@
-// src/pages/Login.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { BlueButton, OrangeButton } from "../components/CustomButton";
 import { CustomTextField } from "../components/CustomTextField";
-import { useUsuario } from "../context/UsuarioContext";
+import { useUsuario } from "../context/usuarioContext";
 import { loginUsuario } from "../services/usuarioService";
 
 export const Login = () => {

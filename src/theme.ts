@@ -31,9 +31,29 @@ export const theme = createTheme({
       secondary: '#0E2B40',
     },
   },
-  typography: {
-    fontFamily: 'Roboto, Arial, sans-serif',
+
+  components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          color: "#0E2B40",                      
+          caretColor: "#0E2B40",         
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          color: "#0E2B40",  
+        },
+      },
+    },
   },
+
+  typography: {
+    fontFamily: "Roboto, Arial, sans-serif",
+  },
+
 });
 
 export default theme;

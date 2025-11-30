@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button, useTheme } from "@mui/material";
+import { Box, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button, useTheme, List, ListItem, ListItemText } from "@mui/material";
 import { BlueButton, OrangeButton } from "../components/CustomButton";
 import { CustomTextField } from "../components/CustomTextField";
 import { useUsuario } from "../context/UsuarioContext";
 import { updateUsuario, deleteUsuario, loginUsuario } from "../services/usuarioService";
+import { buscarComentarios, deleteComentario } from "../services/comentarioService";
+import { getFavoritosClubByUsuario, deleteFavoritoClub } from "../services/favoritoClubService";
+import { getFavoritosCarreraByUsuario, deleteFavoritoCarrera } from "../services/favoritoCarreraService";
 import { useNavigate } from "react-router-dom";
 
 export const Perfil = () => {
@@ -15,8 +18,36 @@ export const Perfil = () => {
   const [email, setEmail] = useState(usuario?.email || "");
   const [contraseñaActual, setContraseñaActual] = useState("");
   const [nuevaContraseña, setNuevaContraseña] = useState("");
-  const [mensaje, setMensaje] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [comentarios, setComentarios] = useState<any[]>([]);
+  const [favoritosClub, setFavoritosClub] = useState<any[]>([]);
+  const [favoritosCarrera, setFavoritosCarrera] = useState<any[]>([]);
+
+  // Cargar datos asociados al usuario
+  useEffect(() => {
+    const fetchDatosAsociados = async () => {
+      if (!usuario) return;
+      setLoading(true);
+      try {
+        const [coms, favClubs, favCarrs] = await Promise.all([
+          buscarComentarios({ usuarioId: usuario.usuarioId }),
+          getFavoritosClubByUsuario(usuario.usuarioId),
+          getFavoritosCarreraByUsuario(usuario.usuarioId)
+        ]);
+        setComentarios(coms);
+        setFavoritosClub(favClubs);
+        setFavoritosCarrera(favCarrs);
+      } catch (err) {
+        console.error(err);
+        alert("Error al cargar comentarios y favoritos.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDatosAsociados();
+  }, [usuario]);
 
   useEffect(() => {
     if (usuario) {
@@ -25,68 +56,104 @@ export const Perfil = () => {
     }
   }, [usuario]);
 
+  // Guardar cambios del perfil
   const handleGuardar = async () => {
-  try {
-    setMensaje("");
-
     if (!usuario) {
-      setMensaje("Debes iniciar sesión para editar tu perfil.");
+      alert("Debes iniciar sesión para editar tu perfil.");
       return;
     }
-
-    // Validar contraseña actual antes de cambiar algo
     if (!contraseñaActual) {
-      setMensaje("Debes ingresar tu contraseña actual para guardar cambios.");
+      alert("Debes ingresar tu contraseña actual para guardar cambios.");
       return;
     }
 
     try {
       await loginUsuario(usuario.email, contraseñaActual);
     } catch {
-      setMensaje("❌ Contraseña actual incorrecta.");
+      alert("❌ Contraseña actual incorrecta.");
       return;
     }
 
-    // Crear objeto con los datos actualizados
     const usuarioActualizado = {
       usuarioId: usuario.usuarioId,
       nombre,
       email,
-      contraseña: nuevaContraseña || contraseñaActual, // si no cambia, se mantiene
+      contraseña: nuevaContraseña || contraseñaActual,
       rolId: usuario.rolId,
     };
 
-    // Llamada al servicio usando la propiedad correcta
-    const actualizado = await updateUsuario(usuario.usuarioId, usuarioActualizado);
+    try {
+      const actualizado = await updateUsuario(usuario.usuarioId, usuarioActualizado);
+      setUsuario(actualizado);
+      localStorage.setItem("usuario", JSON.stringify(actualizado));
+      alert("Datos actualizados correctamente.");
+      setContraseñaActual("");
+      setNuevaContraseña("");
+    } catch (error) {
+      console.error(error);
+      alert("❌ Error al actualizar los datos.");
+    }
+  };
 
-    setUsuario(actualizado);
-    localStorage.setItem("usuario", JSON.stringify(actualizado));
+  // Eliminar datos asociados
+  const handleDeleteAsociados = async () => {
+    if (!usuario) return;
+    if (!confirm("¿Seguro que quieres eliminar todos tus comentarios y favoritos?")) return;
 
-    setMensaje("Datos actualizados correctamente.");
-    setContraseñaActual("");
-    setNuevaContraseña("");
-  } catch (error) {
-    console.error(error);
-    setMensaje("❌ Error al actualizar los datos.");
-  }
-};
+    try {
+      setLoading(true);
 
+      for (const c of comentarios) {
+        const id = c.comentarioId ?? c.id;
+        if (id) await deleteComentario(id);
+      }
+
+      for (const f of favoritosClub) {
+        const usuarioId = f.usuarioId ?? usuario.usuarioId;
+        const clubId = f.clubId;
+        if (usuarioId && clubId) await deleteFavoritoClub(usuarioId, clubId);
+      }
+
+      for (const f of favoritosCarrera) {
+        const usuarioId = f.usuarioId ?? usuario.usuarioId;
+        const carreraId = f.carreraId ?? f.carrera?.carreraId;
+        if (usuarioId && carreraId) await deleteFavoritoCarrera(usuarioId, carreraId);
+      }
+
+      setComentarios([]);
+      setFavoritosClub([]);
+      setFavoritosCarrera([]);
+
+      alert("Datos asociados eliminados correctamente.");
+    } catch (error) {
+      console.error(error);
+      alert("❌ Error al eliminar datos asociados.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Eliminar cuenta
-  const handleEliminar = async () => {
+  const handleEliminarCuenta = async () => {
+    if (!usuario) return;
+    if (comentarios.length || favoritosClub.length || favoritosCarrera.length) {
+      alert("❌ Primero elimina tus comentarios y favoritos antes de borrar la cuenta.");
+      return;
+    }
+    if (!confirm("¿Seguro que quieres eliminar tu cuenta?")) return;
+
     try {
-      if (!usuario) return;
-
-      await deleteUsuario(usuario.id_usuario);
-
-      // limpiar sesión
+      setLoading(true);
+      await deleteUsuario(usuario.usuarioId);
       localStorage.removeItem("usuario");
       setUsuario(null);
-      setOpenDialog(false);
+      alert("Cuenta eliminada correctamente.");
       navigate("/login");
     } catch (error) {
       console.error(error);
-      setMensaje("❌ Error al eliminar la cuenta.");
+      alert("❌ Error al eliminar la cuenta.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,9 +171,9 @@ export const Perfil = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        mt: 4,  
-        mb: 4,   
-        px: 2, 
+        mt: 4,
+        mb: 4,
+        px: 2,
         backgroundColor: "background.default",
       }}
     >
@@ -141,29 +208,67 @@ export const Perfil = () => {
           onChange={(e) => setNuevaContraseña(e.target.value)}
         />
 
-        {mensaje && (
-          <Box
-            sx={{
-              mt: 1,
-              p: 1.5,
-              borderRadius: 2,
-              backgroundColor:theme.palette.background.default,
-              color: mensaje.includes("❌") ? theme.palette.secondary.main : theme.palette.primary.main,
-              textAlign: "center",
-              fontWeight: 500,
-              boxShadow: 1,
-            }}
-          >
-            {mensaje}
-          </Box>
-        )}
-
         <BlueButton fullWidth onClick={handleGuardar}>Guardar cambios</BlueButton>
 
-        <OrangeButton fullWidth onClick={() => setOpenDialog(true)}>Eliminar cuenta</OrangeButton>
+        {(comentarios.length > 0 || favoritosClub.length > 0 || favoritosCarrera.length > 0) && (
+        <Box sx={{ mt: 2, textAlign: "left" }}>
+          {/* Comentarios */}
+          {comentarios.length > 0 && (
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle1">Tus comentarios</Typography>
+              <List dense>
+                {comentarios.map((c) => (
+                  <ListItem key={c.id_comentario ?? c.id}>
+                    <ListItemText primary={c.texto} />
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          )}
+
+          {/* Favoritos */}
+          {(favoritosClub.length > 0 || favoritosCarrera.length > 0) && (
+            <Box>
+              <Typography variant="subtitle1">Tus favoritos</Typography>
+
+              {favoritosClub.length > 0 && (
+                <List dense>
+                  {favoritosClub.map((f) => (
+                    <ListItem key={`club-${f.usuarioId}-${f.clubId}`}>
+                      <ListItemText primary={f.clubNombre} />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+
+              {favoritosCarrera.length > 0 && (
+                <List dense>
+                  {favoritosCarrera.map((f) => (
+                    <ListItem key={`carrera-${f.usuarioId}-${f.carrera?.carreraId}`}>
+                      <ListItemText primary={f.carrera?.nombre} />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+            </Box>
+          )}
+
+          <OrangeButton fullWidth onClick={handleDeleteAsociados}>
+            Eliminar todos los datos asociados
+          </OrangeButton>
+        </Box>
+      )}
+
+        <OrangeButton
+          fullWidth
+          sx={{ mt: 2 }}
+          onClick={() => setOpenDialog(true)}
+          disabled={comentarios.length > 0 || favoritosClub.length > 0 || favoritosCarrera.length > 0}
+        >
+          Eliminar cuenta
+        </OrangeButton>
       </Box>
 
-      {/* Diálogo de confirmación */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Eliminar cuenta</DialogTitle>
         <DialogContent>
@@ -171,7 +276,7 @@ export const Perfil = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
-          <Button color="error" onClick={handleEliminar}>Eliminar</Button>
+          <Button color="error" onClick={handleEliminarCuenta}>Eliminar</Button>
         </DialogActions>
       </Dialog>
     </Box>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box, Card, CardContent, Typography, TextField, Button, Rating, MenuItem } from "@mui/material";
-import { useUsuario } from "../context/UsuarioContext";
+import { useUsuario } from "../context/usuarioContext";
 import { type ComentarioRequest, createComentario, updateComentario, getComentariosByClubId } from "../services/comentarioService";
 
 type ClubCommentsProps = {
@@ -149,8 +149,15 @@ export const ClubComments = ({ clubId }: ClubCommentsProps) => {
             multiline
             rows={3}
             fullWidth
-            sx={{ mt:2, mb: 1, input: { color: "text.primary" }, label: { color: "text.primary" } }}
-            inputProps={{ "aria-required": true }}
+            sx={{
+              mt: 2,
+              mb: 1,
+              "& .MuiInputBase-input": { color: "#fff" }, 
+              "& .MuiInputLabel-root": { color: "#fff" },
+              "& .MuiOutlinedInput-notchedOutline": { borderColor: "#fff" }, 
+              "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#fff" },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#fff" }
+            }}
           />
 
           <TextField
@@ -161,15 +168,17 @@ export const ClubComments = ({ clubId }: ClubCommentsProps) => {
             onChange={e => handleChange("valoracion", Number(e.target.value))}
             fullWidth
             size="small"
-            sx={{ 
-              mt:2,
-              mb: 1, 
-              input: { color: "text.primary" }, 
-              label: { color: "text.primary" } 
+            sx={{
+              mt: 2,
+              mb: 1,
+              "& .MuiInputBase-input": { color: "#fff" },  
+              "& .MuiInputLabel-root": { color: "#fff" },  
+              "& .MuiOutlinedInput-notchedOutline": { borderColor: "#fff" },
+              "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#fff" },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#fff" }
             }}
-            inputProps={{ "aria-required": true, "aria-label": "Valoración del comentario" }}
           >
-            <MenuItem value="" disabled aria-label="Seleccione una valoración">
+            <MenuItem value="" disabled>
               Seleccione valoración
             </MenuItem>
             {[1, 2, 3, 4, 5].map(n => (

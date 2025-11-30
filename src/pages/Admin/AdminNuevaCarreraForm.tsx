@@ -43,20 +43,19 @@ export const AdminNuevaCarreraForm = () => {
   };
 
   const handleSubmit = async () => {
-    if (!carrera.clubId) {
-      alert("Debes seleccionar un club");
-      return;
-    }
-
     try {
       const locCreada = await saveLocalizacion(localizacion);
 
       const carreraToSave: Partial<Carrera> = {
         ...carrera,
         localizacionId: locCreada.localizacionId,
+        clubId: carrera.clubId ?? null,
       };
 
-      await saveCarrera(carreraToSave);
+      const nuevaCarrera = await saveCarrera(carreraToSave);
+
+      setCarrera(nuevaCarrera);
+
       navigate("/admin/carreras");
     } catch (err) {
       console.error(err);
@@ -91,11 +90,13 @@ export const AdminNuevaCarreraForm = () => {
 
         <SelectInput
           label="Club"
-          value={carrera.clubId || ""}
-          onChange={val => handleCarreraChange("clubId", Number(val))}
-          options={clubs.map(club => ({ value: club.clubId, label: club.nombre }))}
+          value={carrera.clubId ?? ""}
+          onChange={val => handleCarreraChange("clubId", val ? Number(val) : null)}
+          options={[
+            { value: "", label: "Sin club" },
+            ...clubs.map(club => ({ value: club.clubId, label: club.nombre }))
+          ]}
           fullWidth
-          required
         />
 
         <TextInput

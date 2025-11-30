@@ -23,6 +23,9 @@ export const TextInput = ({ label, value, onChange, type = "text" }: TextInputPr
       }}
       sx={{
         mb: 2,
+         "& .MuiInputBase-input": {
+          color: theme.palette.primary.main,
+        },
         "& .MuiInputBase-root": {
           color: theme.palette.primary.main,
           backgroundColor: "transparent",

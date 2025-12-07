@@ -65,12 +65,12 @@ export const ListPage = ({ items = [], getDetailLink, search = "" }: ListPagePro
                   <Typography
                     variant="subtitle2"
                     component="h3"
-                    color={theme.palette.text.primary}
+                    color={theme.palette.text.secondary}
                   >
                     {item.label}
                   </Typography>
                   {item.description && (
-                    <Typography variant="body2" sx={{ mt: 0.5 }} color={theme.palette.text.primary}>
+                    <Typography variant="body2" sx={{ mt: 0.5 }} color={theme.palette.text.secondary}>
                       {item.description}
                     </Typography>
                   )}
